@@ -1,0 +1,23 @@
+#Tue Sep 09 17:03:07 CEST 2003
+=
+body=Text
+calendar_admin=Kalenderregister
+calendar_type_editor=Kalenderredakt\u00F6r
+close=St\u00E4ng
+date=Datum
+delete_type=Ta bort typ
+headline=Rubrik
+hide_month=G\u00F6m m\u00E5nad
+iw.component.com.idega.block.calendar.presentation.Calendar.name=Kalender
+iw.component.com.idega.block.calendar.presentation.SmallCalendar.name=Liten Kalender
+iw.component.com.idega.block.importer.presentation.Importer.name=
+locale=Spr\u00E5k
+name=Namn
+new_image=Ny bild
+new_type=Ny typ
+no_access=Ej r\u00E4ttigheter
+no_entries=Ingenting registrerat
+save=Spara
+show_month=Visa m\u00E5nad
+time=Tid
+type=Typ

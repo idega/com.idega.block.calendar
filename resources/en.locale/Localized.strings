@@ -1,0 +1,21 @@
+#Wed Mar 05 15:51:14 CET 2003
+calendar_admin=Calendar Admin
+delete_type=Delete type
+type=Type
+time=Time
+show_month=Show month
+new_type=New type
+new_image=New image
+no_access=Login first\!
+headline=Headline
+body=Body
+close=Close
+locale=Locale
+save=Save
+iw.component.com.idega.block.calendar.presentation.SmallCalendar.name=Small Calendar
+calendar_type_editor=Calendar Type Editor
+no_entries=No entries in calendar
+date=Date
+hide_month=Hide month
+name=Name
+iw.component.com.idega.block.calendar.presentation.Calendar.name=Calendar

@@ -1,0 +1,23 @@
+#Tue Sep 09 17:03:07 CEST 2003
+=
+body=Texti
+calendar_admin=Dagatalsf\u00E6rslur
+calendar_type_editor=Dagatalsstj\u00F3ri
+close=St\u00E4ng
+date=Dagsetning
+delete_type=Ey\u00F0a tegund
+headline=Fyrirs\u00F6gn
+hide_month=Hide month
+iw.component.com.idega.block.calendar.presentation.Calendar.name=Calendar
+iw.component.com.idega.block.calendar.presentation.SmallCalendar.name=SmallCalendar
+iw.component.com.idega.block.importer.presentation.Importer.name=
+locale=Tungum\u00E1l
+name=Nafn
+new_image=N\u00FD mynd
+new_type=N\u00FD tegund
+no_access=Engin r\u00E9ttindi
+no_entries=Engar f\u00E6rslur \u00ED dagatali
+save=Spara
+show_month=S\u00FDna m\u00E1nu\u00F0
+time=Tid
+type=Tegund
