@@ -1,10 +1,12 @@
-#Fri Oct 24 12:54:49 CEST 2003
 =
 body=Texti
 calendar_admin=Dagatalsf\u00E6rslur
 calendar_type_editor=Dagatalsstj\u00F3ri
+category=Category
 close=St\u00E4ng
 date=Dagsetning
+date_end=End date
+date_start=Start date
 delete_type=Ey\u00F0a tegund
 headline=Fyrirs\u00F6gn
 hide_month=Hide month
