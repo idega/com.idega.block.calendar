@@ -5,14 +5,20 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Calendar Block</name>
   <artifactId>com.idega.block.calendar</artifactId>
-    <currentVersion>1.0.1</currentVersion>
+  <currentVersion>1.0.1</currentVersion>
   <!--currentVersion>1.1-SNAPSHOT</currentVersion-->
+
   <shortDescription>Calendar</shortDescription>
   <versions>
     <version>
       <id>1.0</id>
       <name>1.0</name>
       <tag>CALENDAR_1_0</tag>
+    </version>
+    <version>
+      <id>1.0.1</id>
+      <name>1.0.1</name>
+      <tag>CALENDAR_1_0_1</tag>
     </version>
   </versions>
   <branches/>
@@ -52,10 +58,13 @@
       <artifactId>com.idega.core</artifactId>
       <!--HELPER--><version>3.0.5</version><!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-        <j:if test="${idegaweb.project.source.dependent}=='true'}"><eclipse.dependency>true</eclipse.dependency></j:if>
+        <j:if test="${idegaweb.project.source.dependent}==&apos;true&apos;}">
+          <eclipse.dependency>true</eclipse.dependency>
+        </j:if>
       </properties>
     </dependency>
     <dependency>
@@ -63,10 +72,13 @@
       <artifactId>com.idega.block.category</artifactId>
       <!--HELPER--><version>1.0.1</version><!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-        <j:if test="${idegaweb.project.source.dependent}=='true'}"><eclipse.dependency>true</eclipse.dependency></j:if>
+        <j:if test="${idegaweb.project.source.dependent}==&apos;true&apos;}">
+          <eclipse.dependency>true</eclipse.dependency>
+        </j:if>
       </properties>
     </dependency>
     <dependency>
@@ -74,10 +86,13 @@
       <artifactId>com.idega.block.media</artifactId>
       <!--HELPER--><version>1.1.2</version><!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-        <j:if test="${idegaweb.project.source.dependent}=='true'}"><eclipse.dependency>true</eclipse.dependency></j:if>
+        <j:if test="${idegaweb.project.source.dependent}==&apos;true&apos;}">
+          <eclipse.dependency>true</eclipse.dependency>
+        </j:if>
       </properties>
     </dependency>
     <dependency>
@@ -85,10 +100,13 @@
       <artifactId>com.idega.block.text</artifactId>
       <!--HELPER--><version>1.0.1</version><!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-        <j:if test="${idegaweb.project.source.dependent}=='true'}"><eclipse.dependency>true</eclipse.dependency></j:if>
+        <j:if test="${idegaweb.project.source.dependent}==&apos;true&apos;}">
+          <eclipse.dependency>true</eclipse.dependency>
+        </j:if>
       </properties>
     </dependency>
   </dependencies>
