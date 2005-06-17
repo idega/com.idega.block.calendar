@@ -2,8 +2,10 @@
 body=Texti
 calendar_admin=Dagatalsf\u00E6rslur
 calendar_type_editor=Dagatalsstj\u00F3ri
+cancel=CANCEL
 category=Category
 close=St\u00E4ng
+confirm_delete=Are you sure you want to delete this calendar entry?
 date=Dagsetning
 date_end=End date
 date_start=Start date
@@ -23,3 +25,4 @@ save=Spara
 show_month=S\u00FDna m\u00E1nu\u00F0
 time=Tid
 type=Tegund
+yes=YES
