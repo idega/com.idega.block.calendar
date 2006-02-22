@@ -39,8 +39,6 @@ private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.calendar";
 
 private boolean _isAdmin = false;
 
-private boolean _save = false;
-
 private boolean _update = false;
 
 private int _typeID = -1;
