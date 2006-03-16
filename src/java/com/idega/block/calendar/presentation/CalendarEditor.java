@@ -11,6 +11,7 @@ import com.idega.block.text.business.TextFinder;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -223,10 +224,12 @@ public class CalendarEditor extends IWAdminWindow {
 
 		int entryID = CalendarBusiness.saveEntry(_entryID, _userID, _groupID, localeID, categoryId, entryHeadline, entryBody, entryDate, entryEndDate, entryType);
 		iwc.setSessionAttribute(CalendarParameters.PARAMETER_ENTRY_ID, Integer.toString(entryID));
+		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
 	}
 
 	private void deleteEntry(IWContext iwc) {
 		CalendarBusiness.deleteEntry(_entryID);
+		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
 		closeEditor(iwc);
 	}
 

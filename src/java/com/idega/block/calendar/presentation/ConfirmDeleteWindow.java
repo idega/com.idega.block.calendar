@@ -2,6 +2,7 @@ package com.idega.block.calendar.presentation;
 
 import com.idega.block.calendar.business.CalendarBusiness;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -55,6 +56,7 @@ public class ConfirmDeleteWindow extends IWAdminWindow{
         String _entryID = iwc.getParameter(PRM_DELETE_ID);
         try {
           CalendarBusiness.deleteEntry(Integer.parseInt(_entryID));
+          IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
         }
         catch (Exception ex) {
           ex.printStackTrace();

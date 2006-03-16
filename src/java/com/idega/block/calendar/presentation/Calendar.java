@@ -35,6 +35,8 @@ import com.idega.presentation.text.Text;
 import com.idega.util.IWTimestamp;
 
 public class Calendar extends CategoryBlock implements Builderaware {
+	
+	public static final String CACHE_KEY = "calendar_cache";
 
 	private int _timeStyle = IWTimestamp.SHORT;
 
@@ -134,10 +136,36 @@ public class Calendar extends CategoryBlock implements Builderaware {
 
 	public Calendar() {
 		// _stamp = IWTimestamp.getTimestampRightNow();
+		setCacheable(getCacheKey(), (20 * 60 * 1000));
 	}
 
 	public Calendar(IWTimestamp timestamp) {
 		_stamp = timestamp;
+		setCacheable(getCacheKey(), (20 * 60 * 1000));
+	}
+
+	public String getCacheKey() {
+		return CACHE_KEY;
+	}
+	
+	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(cacheStatePrefix);
+		
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_VIEW)) {
+			buffer.append(iwc.getParameter(CalendarParameters.PARAMETER_VIEW));
+		}
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_DAY)) {
+			buffer.append(iwc.getParameter(CalendarParameters.PARAMETER_DAY));
+		}
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_MONTH)) {
+			buffer.append(iwc.getParameter(CalendarParameters.PARAMETER_MONTH));
+		}
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_YEAR)) {
+			buffer.append(iwc.getParameter(CalendarParameters.PARAMETER_YEAR));
+		}
+
+		return cacheStatePrefix;
 	}
 
 	public void registerPermissionKeys() {

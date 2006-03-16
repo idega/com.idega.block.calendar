@@ -17,6 +17,7 @@ import com.idega.block.text.business.TextFinder;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -320,27 +321,21 @@ public CalendarTypeEditor(){
 
 
   private void deleteType(IWContext iwc) {
-
     CalendarBusiness.deleteEntryType(_typeID);
-
     _typeID = -1;
-
+		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
   }
 
 
 
   private void saveType(IWContext iwc,int iLocaleID) {
-
     String typeHeadline = iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_HEADLINE);
-
     String fileID = iwc.getParameter(CalendarParameters.PARAMETER_FILE_ID);
 
-
-
     int typeID = CalendarBusiness.saveEntryType(_typeID,iLocaleID,typeHeadline,fileID);
-
     iwc.setSessionAttribute(CalendarParameters.PARAMETER_TYPE_ID,Integer.toString(typeID));
-
+		
+    IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
   }
 
 
