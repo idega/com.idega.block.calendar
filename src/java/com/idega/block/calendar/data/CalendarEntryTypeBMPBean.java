@@ -13,6 +13,7 @@ import javax.transaction.TransactionManager;
 
 import com.idega.block.text.business.TextFinder;
 import com.idega.block.text.data.LocalizedText;
+import com.idega.data.GenericEntity;
 import com.idega.transaction.IdegaTransactionManager;
 
 
@@ -153,7 +154,7 @@ public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity imple
 
 	public void delete() throws SQLException{
 
-    removeFrom(com.idega.block.text.data.LocalizedTextBMPBean.getStaticInstance(LocalizedText.class));
+    removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 
 		super.delete();
 
