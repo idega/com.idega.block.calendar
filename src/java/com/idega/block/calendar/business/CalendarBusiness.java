@@ -129,8 +129,9 @@ public class CalendarBusiness {
 		entry.setUserID(userID);
 		entry.setGroupID(groupID);
 		entry.setDate(new IWTimestamp(entryDate).getTimestamp());
-		if (entryEndDate != null && entryEndDate.length() > 0)
+		if (entryEndDate != null && entryEndDate.length() > 0) {
 			entry.setEndDate(new IWTimestamp(entryEndDate).getTimestamp());
+		}
 
 		if (!update) {
 			try {
@@ -214,8 +215,9 @@ public class CalendarBusiness {
 			imageID = -1;
 		}
 
-		if (imageID != -1)
+		if (imageID != -1) {
 			type.setImageID(imageID);
+		}
 
 		if (!update) {
 			try {
@@ -266,11 +268,12 @@ public class CalendarBusiness {
 		if (type != null) {
 			try {
 				CalendarEntry[] entries = (CalendarEntry[]) com.idega.block.calendar.data.CalendarEntryBMPBean.getStaticInstance().findAllByColumn(com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryTypeID(), typeID);
-				if (entries != null)
+				if (entries != null) {
 					for (int a = 0; a < entries.length; a++) {
 						entries[a].removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 						entries[a].delete();
 					}
+				}
 				type.removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 				type.delete();
 			} catch (Exception e) {
