@@ -5,6 +5,10 @@
   <comment>
   </comment>
   <projects>
+    <project>com.idega.block.category</project>
+    <project>com.idega.block.media</project>
+    <project>com.idega.block.text</project>
+    <project>com.idega.block.web2.0</project>
   </projects>
   <buildSpec>
     <buildCommand>
