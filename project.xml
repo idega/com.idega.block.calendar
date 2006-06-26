@@ -5,8 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Calendar Block</name>
   <artifactId>com.idega.block.calendar</artifactId>
-  <!--currentVersion>1.0.1</currentVersion-->
-  <currentVersion>1.1-SNAPSHOT</currentVersion>
+  <currentVersion>3.1.0</currentVersion>
 
   <shortDescription>Calendar</shortDescription>
   <versions>
@@ -56,49 +55,45 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <!--version>3.0.5</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
+<<<<<<< project.xml
+          <eclipse.dependency>true</eclipse.dependency>
+=======
           <eclipse.dependency>${idegaweb.project.source.dependent}</eclipse.dependency>
+>>>>>>> 1.13
       </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.category</artifactId>
-      <!--version>1.0.1</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-          <eclipse.dependency>${idegaweb.project.source.dependent}</eclipse.dependency>
+          <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.media</artifactId>
-      <!--version>1.1.2</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-          <eclipse.dependency>${idegaweb.project.source.dependent}</eclipse.dependency>
+          <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.text</artifactId>
-      <!--version>1.0.1</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-          <eclipse.dependency>${idegaweb.project.source.dependent}</eclipse.dependency>
+          <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
   </dependencies>
