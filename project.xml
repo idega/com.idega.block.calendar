@@ -59,11 +59,7 @@
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
-<<<<<<< project.xml
           <eclipse.dependency>true</eclipse.dependency>
-=======
-          <eclipse.dependency>${idegaweb.project.source.dependent}</eclipse.dependency>
->>>>>>> 1.13
       </properties>
     </dependency>
     <dependency>
