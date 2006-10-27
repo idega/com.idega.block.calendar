@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Calendar Block</name>
   <artifactId>com.idega.block.calendar</artifactId>
-  <currentVersion>3.1.0</currentVersion>
+  <currentVersion>3.1.1</currentVersion>
   <shortDescription>Calendar</shortDescription>
   <versions>
     <version>

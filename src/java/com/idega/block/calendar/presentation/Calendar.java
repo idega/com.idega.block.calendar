@@ -165,7 +165,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 			buffer.append(iwc.getParameter(CalendarParameters.PARAMETER_YEAR));
 		}
 
-		return cacheStatePrefix;
+		return buffer.toString();
 	}
 
 	public void registerPermissionKeys() {
