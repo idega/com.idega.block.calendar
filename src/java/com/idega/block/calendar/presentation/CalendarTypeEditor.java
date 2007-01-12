@@ -17,7 +17,6 @@ import com.idega.block.text.business.TextFinder;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -39,6 +38,8 @@ public class CalendarTypeEditor extends IWAdminWindow{
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.calendar";
 
 private boolean _isAdmin = false;
+
+private boolean _save = false;
 
 private boolean _update = false;
 
@@ -213,16 +214,16 @@ public CalendarTypeEditor(){
     CalendarEntryType type = null;
 
     if ( this._update ) {
-			type = CalendarFinder.getInstance().getEntryType(this._typeID);
-		}
+		type = CalendarFinder.getInstance().getEntryType(this._typeID);
+	}
 
 
 
     String[] locStrings = null;
 
     if ( type != null ) {
-			locStrings = TextFinder.getLocalizedString(type,iLocaleID);
-		}
+		locStrings = TextFinder.getLocalizedString(type,iLocaleID);
+	}
 
 
 
@@ -253,8 +254,8 @@ public CalendarTypeEditor(){
       entryTypes.setMarkupAttribute("style",STYLE);
 
       if ( this._typeID != -1 ) {
-				entryTypes.setSelectedElement(Integer.toString(this._typeID));
-			}
+		entryTypes.setSelectedElement(Integer.toString(this._typeID));
+	}
 
     typesTable.add(entryTypes,1,1);
 
@@ -291,8 +292,8 @@ public CalendarTypeEditor(){
       nameInput.setLength(24);
 
       if ( locStrings != null && locStrings[0] != null ) {
-				nameInput.setContent(locStrings[0]);
-			}
+		nameInput.setContent(locStrings[0]);
+	}
 
     addLeft(this._iwrb.getLocalizedString("name","Name")+":",nameInput,true);
 
@@ -303,8 +304,8 @@ public CalendarTypeEditor(){
       image.setHasUseBox(false);
 
       if ( type != null && type.getImageID() != -1 ) {
-				image.setImageId(type.getImageID());
-			}
+		image.setImageId(type.getImageID());
+	}
 
     addRight(this._iwrb.getLocalizedString("new_image","New image")+":",image,true,false);
 
@@ -321,21 +322,27 @@ public CalendarTypeEditor(){
 
 
   private void deleteType(IWContext iwc) {
+
     CalendarBusiness.deleteEntryType(this._typeID);
+
     this._typeID = -1;
-		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
+
   }
 
 
 
   private void saveType(IWContext iwc,int iLocaleID) {
+
     String typeHeadline = iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_HEADLINE);
+
     String fileID = iwc.getParameter(CalendarParameters.PARAMETER_FILE_ID);
 
+
+
     int typeID = CalendarBusiness.saveEntryType(this._typeID,iLocaleID,typeHeadline,fileID);
+
     iwc.setSessionAttribute(CalendarParameters.PARAMETER_TYPE_ID,Integer.toString(typeID));
-		
-    IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
+
   }
 
 

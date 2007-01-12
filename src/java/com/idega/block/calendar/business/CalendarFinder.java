@@ -25,8 +25,8 @@ public class CalendarFinder {
 
   public static CalendarFinder getInstance(){
     if(calendarFinder == null) {
-			calendarFinder = new CalendarFinder();
-		}
+		calendarFinder = new CalendarFinder();
+	}
     return calendarFinder;
   }
 
@@ -34,8 +34,8 @@ public class CalendarFinder {
     try {
       CalendarEntry[] cal = (CalendarEntry[]) com.idega.block.calendar.data.CalendarEntryBMPBean.getStaticInstance().findAllByColumnOrdered(com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryDate(),stamp.toString(),com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryTypeID(),"=");
       if ( cal.length > 0 ) {
-				return cal;
-			}
+		return cal;
+	}
       return null;
     }
     catch (SQLException e) {
@@ -98,8 +98,8 @@ public class CalendarFinder {
 
       CalendarEntry[] cal = (CalendarEntry[]) com.idega.block.calendar.data.CalendarEntryBMPBean.getStaticInstance().findAllByColumnOrdered(com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryDate(),stampPlus.toString(),com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryDate(),stamp.toString(),com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryDate(),"<",">=");
       if ( cal.length > 0 ) {
-				return cal;
-			}
+		return cal;
+	}
       return null;
     }
     catch (SQLException e) {

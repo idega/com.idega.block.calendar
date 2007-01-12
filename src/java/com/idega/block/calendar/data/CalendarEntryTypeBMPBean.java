@@ -40,7 +40,7 @@ public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity imple
 
   public void insertStartData()throws Exception{
 
-    String[] entries = { "Afmæli","Fundir","Viðburður","Frídagur","Skiladagur","Tilkynning","Birthday","Meeting","Event","Holiday","Deadline","Announcement" };
+    String[] entries = { "Afmï¿½li","Fundir","Viï¿½burï¿½ur","Frï¿½dagur","Skiladagur","Tilkynning","Birthday","Meeting","Event","Holiday","Deadline","Announcement" };
 
 
 

@@ -3,7 +3,6 @@ package com.idega.block.calendar.presentation;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Locale;
-
 import com.idega.block.calendar.business.CalendarBusiness;
 import com.idega.block.calendar.business.CalendarFinder;
 import com.idega.block.calendar.data.CalendarEntry;
@@ -11,7 +10,7 @@ import com.idega.block.text.business.TextFinder;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
-import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -29,14 +28,19 @@ public class CalendarEditor extends IWAdminWindow {
 
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.calendar";
 	private boolean _isAdmin = false;
+	private boolean _superAdmin = false;
 	private boolean _update = false;
+	private boolean _save = false;
+
 	private int _entryID = -1;
+	private int _typeID = -1;
 	private int _userID = -1;
 	private int _groupID = -1;
 	private int _instanceID = -1;
 	private IWTimestamp _stamp;
 	private IWTimestamp _endStamp;
 
+	private IWBundle _iwb;
 	private IWResourceBundle _iwrb;
 
 	public CalendarEditor() {
@@ -50,6 +54,8 @@ public class CalendarEditor extends IWAdminWindow {
 		 * @todo permission
 		 */
 		this._isAdmin = true;
+		this._superAdmin = iwc.hasEditPermission(this);
+		this._iwb = getBundle(iwc);
 		this._iwrb = getResourceBundle(iwc);
 		addTitle(this._iwrb.getLocalizedString("calendar_admin", "Calendar Admin"));
 		Locale currentLocale = iwc.getCurrentLocale(), chosenLocale;
@@ -98,6 +104,14 @@ public class CalendarEditor extends IWAdminWindow {
 				this._entryID = Integer.parseInt(iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_ID));
 			} catch (NumberFormatException e) {
 				this._entryID = -1;
+			}
+		}
+
+		if (iwc.getParameter(CalendarParameters.PARAMETER_TYPE_ID) != null) {
+			try {
+				this._typeID = Integer.parseInt(iwc.getParameter(CalendarParameters.PARAMETER_TYPE_ID));
+			} catch (NumberFormatException e) {
+				this._typeID = -1;
 			}
 		}
 
@@ -230,12 +244,10 @@ public class CalendarEditor extends IWAdminWindow {
 
 		int entryID = CalendarBusiness.saveEntry(this._entryID, this._userID, this._groupID, localeID, categoryId, entryHeadline, entryBody, entryDate, entryEndDate, entryType);
 		iwc.setSessionAttribute(CalendarParameters.PARAMETER_ENTRY_ID, Integer.toString(entryID));
-		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
 	}
 
 	private void deleteEntry(IWContext iwc) {
 		CalendarBusiness.deleteEntry(this._entryID);
-		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
 		closeEditor(iwc);
 	}
 
