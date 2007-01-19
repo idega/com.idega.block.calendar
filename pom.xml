@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: pom.xml,v 1.1 2007/01/19 08:53:56 laddi Exp $ -->
+<!-- $Id: pom.xml,v 1.2 2007/01/19 09:59:55 laddi Exp $ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -10,7 +10,7 @@
   <packaging>jar</packaging>
   <version>3.5.0</version>
   <inceptionYear>2005</inceptionYear>
-  <description>idegaWeb Process Block</description>
+  <description>idegaWeb Calendar Block</description>
   <parent>
     <groupId>com.idega.block.platform</groupId>
     <artifactId>com.idega.block.base</artifactId>
