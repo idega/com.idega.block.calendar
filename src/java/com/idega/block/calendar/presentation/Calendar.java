@@ -66,6 +66,8 @@ public class Calendar extends CategoryBlock implements Builderaware {
 
 	private String _dateColor = "#000000";
 
+	private String _noActionDay = "#999966";
+	
 	private String _actionDay = "#660000";
 
 	private ICPage _page;
@@ -801,6 +803,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 	}
 
 	public void setInActiveDayColor(String color) {
+		this._noActionDay = color;
 	}
 
 	public void setActiveDayColor(String color) {

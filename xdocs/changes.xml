@@ -4,12 +4,20 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+
+
+	<release version="3.1.2" date="2007-03-20">
+   		<action dev="eiki" type="update">
+   			Merged changes made in v.2.0 to v3.1
+   		</action>       
+   	</release>
+   	
 	<release version="3.1.1" date="2006-10-27">
       <action dev="gimmi" type="fix">
 		Fixed getCacheState() to include the date parameters.
       </action>              
 	</release>
-
+    	
 	<release version="3.1.0" date="2006-06-26">
       <action dev="tryggvil" type="update">
         Version Built to be built on ePlatform 3.1 release

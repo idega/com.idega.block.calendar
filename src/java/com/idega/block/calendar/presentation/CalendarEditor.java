@@ -31,6 +31,7 @@ public class CalendarEditor extends IWAdminWindow {
 	private boolean _isAdmin = false;
 	private boolean _update = false;
 	private int _entryID = -1;
+	private int _typeID = -1;
 	private int _userID = -1;
 	private int _groupID = -1;
 	private int _instanceID = -1;
@@ -101,6 +102,14 @@ public class CalendarEditor extends IWAdminWindow {
 			}
 		}
 
+		if (iwc.getParameter(CalendarParameters.PARAMETER_TYPE_ID) != null) {
+			try {
+				this._typeID = Integer.parseInt(iwc.getParameter(CalendarParameters.PARAMETER_TYPE_ID));
+			} catch (NumberFormatException e) {
+				this._typeID = -1;
+			}
+		}
+		
 		if (iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_DATE) != null) {
 			try {
 				this._stamp = new IWTimestamp(iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_DATE));
