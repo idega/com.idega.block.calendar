@@ -1,5 +1,5 @@
 /*
- * $Id: CalendarViewHandler.java,v 1.9 2004/06/28 14:07:44 thomas Exp $
+ * $Id: CalendarViewHandler.java,v 1.10 2007/05/23 08:03:06 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -38,7 +38,7 @@ public class CalendarViewHandler implements ICPropertyHandler {
   /**
    *
    */
-  public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
+  public PresentationObject getHandlerObject(String name, String value, IWContext iwc, boolean oldGenerationHandler) {
     DropdownMenu menu = new DropdownMenu(name);
     menu.addMenuElement("","Select:");
     menu.addMenuElement(CalendarParameters.DAY,"Day view");
