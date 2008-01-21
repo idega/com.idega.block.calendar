@@ -5,6 +5,8 @@
   <comment>
   </comment>
   <projects>
+    <project>com.idega.block.category</project>
+    <project>com.idega.block.text</project>
   </projects>
   <buildSpec>
     <buildCommand>
