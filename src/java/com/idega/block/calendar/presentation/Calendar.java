@@ -66,7 +66,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 
 	private String _dateColor = "#000000";
 
-	private String _noActionDay = "#999966";
+	//private String _noActionDay = "#999966";
 	
 	private String _actionDay = "#660000";
 
@@ -146,10 +146,12 @@ public class Calendar extends CategoryBlock implements Builderaware {
 		setCacheable(getCacheKey(), (20 * 60 * 1000));
 	}
 
+	@Override
 	public String getCacheKey() {
 		return CACHE_KEY;
 	}
 	
+	@Override
 	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(cacheStatePrefix);
@@ -170,23 +172,28 @@ public class Calendar extends CategoryBlock implements Builderaware {
 		return buffer.toString();
 	}
 
+	@Override
 	public void registerPermissionKeys() {
 		registerPermissionKey(this.AddPermission);
 		registerPermissionKey(this.PrePermission);
 	}
 
+	@Override
 	public String getCategoryType() {
 		return ((com.idega.block.calendar.data.CalendarCategoryHome) com.idega.data.IDOLookup.getHomeLegacy(CalendarCategory.class)).createLegacy().getCategoryType();
 	}
 
+	@Override
 	public boolean getMultible() {
 		return true;
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		this._iwrb = getResourceBundle(iwc);
@@ -774,6 +781,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 		this._width = Integer.toString(width);
 	}
 
+	@Override
 	public void setWidth(String width) {
 		this._width = width;
 	}
@@ -803,7 +811,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 	}
 
 	public void setInActiveDayColor(String color) {
-		this._noActionDay = color;
+		//this._noActionDay = color;
 	}
 
 	public void setActiveDayColor(String color) {
@@ -833,10 +841,12 @@ public class Calendar extends CategoryBlock implements Builderaware {
 		this._showMonthButton = showButton;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public boolean deleteBlock(int ICObjectInstanceID) {
 		return CalendarBusiness.deleteBlock(getICObjectInstanceID());
 	}
@@ -844,6 +854,7 @@ public class Calendar extends CategoryBlock implements Builderaware {
 	/**
 	 * @see com.idega.presentation.Block#getStyleNames()
 	 */
+	@Override
 	public Map getStyleNames() {
 		HashMap map = new HashMap();
 		String[] styleNames = { HEADLINE_STYLE_NAME, BODY_STYLE_NAME, DATE_STYLE_NAME, this.CATEGORY_STYLE_NAME };
