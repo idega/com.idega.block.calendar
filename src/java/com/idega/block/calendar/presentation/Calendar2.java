@@ -163,7 +163,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 
 				Layer calendarEntry = new Layer();
 				calendarEntry.setStyleClass("calendarEntry");
-				calendarEntry.setStyleClass(StringHandler.stripNonRomanCharacters(category.getName()));
+				calendarEntry.setStyleClass(StringHandler.stripNonRomanCharacters(category.getName()).toLowerCase());
 				layer.add(calendarEntry);
 
 				if (localeStrings != null) {
