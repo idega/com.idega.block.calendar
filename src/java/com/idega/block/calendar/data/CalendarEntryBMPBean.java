@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.idega.block.calendar.business.CalendarBusiness;
+import com.idega.block.category.data.Category;
 import com.idega.block.text.data.LocalizedText;
 import com.idega.data.GenericEntity;
 import com.idega.user.data.UserBMPBean;
@@ -20,10 +21,12 @@ public class CalendarEntryBMPBean extends com.idega.block.category.data.Category
 		super(id);
 	}
 
-  public void insertStartData()throws Exception{
+  @Override
+	public void insertStartData()throws Exception{
     CalendarBusiness.initializeCalendarEntry();
   }
 
+	@Override
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
     addAttribute(getColumnNameEntryTypeID(),"Type",true,true,Integer.class,"many-to-one",CalendarEntryType.class);
@@ -45,15 +48,25 @@ public class CalendarEntryBMPBean extends com.idega.block.category.data.Category
   public static String getColumnNameUserID(){ return UserBMPBean.getColumnNameUserID();}
 	public static String getColumnNameGroupID() { return com.idega.core.data.GenericGroupBMPBean.getColumnNameGroupID(); }
 
-  public String getIDColumnName(){
+  @Override
+	public String getIDColumnName(){
 		return getColumnNameCalendarID();
 	}
 
+	@Override
 	public String getEntityName(){
 		return getEntityTableName();
 	}
 
 	//GET
+	public Category getCategory() {
+		return (Category) getColumnValue(getColumnCategoryId());
+	}
+	
+	public CalendarEntry getEntryType() {
+		return (CalendarEntry) getColumnValue(getColumnNameEntryTypeID());
+	}
+	
   public int getEntryTypeID() {
     return getIntColumnValue(getColumnNameEntryTypeID());
   }
@@ -98,6 +111,7 @@ public class CalendarEntryBMPBean extends com.idega.block.category.data.Category
 
 
   //DELETE
+	@Override
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 		super.delete();

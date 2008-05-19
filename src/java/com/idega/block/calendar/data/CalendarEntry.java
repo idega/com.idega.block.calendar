@@ -1,18 +1,70 @@
 package com.idega.block.calendar.data;
 
 
-public interface CalendarEntry extends com.idega.block.category.data.CategoryEntity
-{
- public void delete()throws java.sql.SQLException;
- public java.sql.Timestamp getDate();
- public java.sql.Timestamp getEndDate();
- public int getEntryTypeID();
- public int getGroupID();
- public java.lang.String getIDColumnName();
- public int getUserID();
- public void setDate(java.sql.Timestamp p0);
- public void setEndDate(java.sql.Timestamp p0);
- public void setEntryTypeID(int p0);
- public void setGroupID(int p0);
- public void setUserID(int p0);
+import java.sql.Timestamp;
+
+import com.idega.block.category.data.Category;
+import com.idega.block.category.data.CategoryEntity;
+
+public interface CalendarEntry extends CategoryEntity {
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getCategory
+	 */
+	public Category getCategory();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getEntryType
+	 */
+	public CalendarEntry getEntryType();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getEntryTypeID
+	 */
+	public int getEntryTypeID();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getDate
+	 */
+	public Timestamp getDate();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getEndDate
+	 */
+	public Timestamp getEndDate();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getUserID
+	 */
+	public int getUserID();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getGroupID
+	 */
+	public int getGroupID();
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setEntryTypeID
+	 */
+	public void setEntryTypeID(int entryTypeID);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setDate
+	 */
+	public void setDate(Timestamp date);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setEndDate
+	 */
+	public void setEndDate(Timestamp date);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setUserID
+	 */
+	public void setUserID(int userID);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setGroupID
+	 */
+	public void setGroupID(int groupID);
 }

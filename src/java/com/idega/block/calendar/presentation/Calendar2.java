@@ -14,6 +14,7 @@ import com.idega.block.calendar.business.CalendarBusiness;
 import com.idega.block.calendar.business.CalendarFinder;
 import com.idega.block.calendar.data.CalendarCategory;
 import com.idega.block.calendar.data.CalendarEntry;
+import com.idega.block.category.data.Category;
 import com.idega.block.category.presentation.CategoryBlock;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWBundle;
@@ -26,6 +27,7 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringHandler;
 
 public class Calendar2 extends CategoryBlock implements Builderaware {
 	
@@ -56,14 +58,17 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		setCacheable(getCacheKey(), (20 * 60 * 1000));
 	}
 
+	@Override
 	public String getCacheKey() {
 		return CACHE_KEY;
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(cacheStatePrefix);
@@ -71,23 +76,28 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		return buffer.toString();
 	}
 
+	@Override
 	public void registerPermissionKeys() {
 		registerPermissionKey(AddPermission);
 		registerPermissionKey(PrePermission);
 	}
 
+	@Override
 	public String getCategoryType() {
 		return ((com.idega.block.calendar.data.CalendarCategoryHome) com.idega.data.IDOLookup.getHomeLegacy(CalendarCategory.class)).createLegacy().getCategoryType();
 	}
 
+	@Override
 	public boolean getMultible() {
 		return true;
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		this._iwrb = getResourceBundle(iwc);
@@ -146,13 +156,15 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 
 			CalendarEntry entry;
 			for (int a = 0; a < numberOfShown; a++) {
-				Layer calendarEntry = new Layer();
-				calendarEntry.setStyleClass("calendarEntry");
-				layer.add(calendarEntry);
-
 				entry = (CalendarEntry) entries.get(a);
+				Category category = entry.getCategory();
 				localeStrings = CalendarFinder.getInstance().getEntryStrings(entry, this._iLocaleID);
 				stamp = new IWTimestamp(entry.getDate());
+
+				Layer calendarEntry = new Layer();
+				calendarEntry.setStyleClass("calendarEntry");
+				calendarEntry.setStyleClass(StringHandler.stripNonRomanCharacters(category.getName()));
+				layer.add(calendarEntry);
 
 				if (localeStrings != null) {
 					if (localeStrings[0] != null) {
@@ -313,6 +325,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		this._id = id;
 	}
 
+	@Override
 	public boolean deleteBlock(int ICObjectInstanceID) {
 		return CalendarBusiness.deleteBlock(getICObjectInstanceID());
 	}

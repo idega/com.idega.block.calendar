@@ -1,43 +1,44 @@
 package com.idega.block.calendar.data;
 
 
-public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome
-{
- protected Class getEntityInterfaceClass(){
-  return CalendarEntry.class;
- }
+import javax.ejb.CreateException;
+import java.sql.SQLException;
+import javax.ejb.FinderException;
+import com.idega.data.IDOFactory;
 
- public CalendarEntry create() throws javax.ejb.CreateException{
-  return (CalendarEntry) super.idoCreate();
- }
+public class CalendarEntryHomeImpl extends IDOFactory implements CalendarEntryHome {
 
- public CalendarEntry createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
+	public Class getEntityInterfaceClass() {
+		return CalendarEntry.class;
 	}
 
- }
-
- public CalendarEntry findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (CalendarEntry) super.idoFindByPrimaryKey(id);
- }
-
- public CalendarEntry findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (CalendarEntry) super.idoFindByPrimaryKey(pk);
- }
-
- public CalendarEntry findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
+	public CalendarEntry create() throws CreateException {
+		return (CalendarEntry) super.createIDO();
 	}
 
- }
+	public CalendarEntry findByPrimaryKey(Object pk) throws FinderException {
+		return (CalendarEntry) super.findByPrimaryKeyIDO(pk);
+	}
 
+	public CalendarEntry createLegacy() {
+		try {
+			return create();
+		}
+		catch (CreateException ce) {
+			throw new RuntimeException(ce.getMessage());
+		}
+	}
 
+	public CalendarEntry findByPrimaryKey(int id) throws FinderException {
+		return (CalendarEntry) super.findByPrimaryKeyIDO(id);
+	}
+
+	public CalendarEntry findByPrimaryKeyLegacy(int id) throws SQLException {
+		try {
+			return findByPrimaryKey(id);
+		}
+		catch (FinderException fe) {
+			throw new SQLException(fe.getMessage());
+		}
+	}
 }
