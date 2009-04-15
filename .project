@@ -2,8 +2,7 @@
 
 <projectDescription>
   <name>com.idega.block.calendar</name>
-  <comment>
-  </comment>
+  <comment></comment>
   <projects>
     <project>com.idega.block.category</project>
     <project>com.idega.block.text</project>
@@ -11,8 +10,7 @@
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments>
-      </arguments>
+      <arguments></arguments>
     </buildCommand>
   </buildSpec>
   <natures>
