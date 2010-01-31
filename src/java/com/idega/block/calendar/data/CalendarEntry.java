@@ -16,7 +16,7 @@ public interface CalendarEntry extends CategoryEntity {
 	/**
 	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getEntryType
 	 */
-	public CalendarEntry getEntryType();
+	public CalendarEntryType getEntryType();
 
 	/**
 	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getEntryTypeID

@@ -63,8 +63,8 @@ public class CalendarEntryBMPBean extends com.idega.block.category.data.Category
 		return (Category) getColumnValue(getColumnCategoryId());
 	}
 	
-	public CalendarEntry getEntryType() {
-		return (CalendarEntry) getColumnValue(getColumnNameEntryTypeID());
+	public CalendarEntryType getEntryType() {
+		return (CalendarEntryType) getColumnValue(getColumnNameEntryTypeID());
 	}
 	
   public int getEntryTypeID() {

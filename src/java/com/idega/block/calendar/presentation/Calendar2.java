@@ -8,12 +8,14 @@ package com.idega.block.calendar.presentation;
  * @version 1.0
  */
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.idega.block.calendar.business.CalendarBusiness;
 import com.idega.block.calendar.business.CalendarFinder;
 import com.idega.block.calendar.data.CalendarCategory;
 import com.idega.block.calendar.data.CalendarEntry;
+import com.idega.block.calendar.data.CalendarEntryType;
 import com.idega.block.category.data.Category;
 import com.idega.block.category.presentation.CategoryBlock;
 import com.idega.core.localisation.business.ICLocaleBusiness;
@@ -158,6 +160,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 			for (int a = 0; a < numberOfShown; a++) {
 				entry = (CalendarEntry) entries.get(a);
 				Category category = entry.getCategory();
+				CalendarEntryType type = entry.getEntryType();
 				localeStrings = CalendarFinder.getInstance().getEntryStrings(entry, this._iLocaleID);
 				stamp = new IWTimestamp(entry.getDate());
 
@@ -183,6 +186,17 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 				}
 
 				if (headlineText != null) {
+					if (type.getImageID() > 0) {
+						try {
+							Image image = new Image(type.getImageID());
+							image.setStyleClass("entryImage");
+							calendarEntry.add(image);
+						}
+						catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+					
 					Layer date = new Layer();
 					Text dateText = new Text(_datePattern != null ? stamp.getDateString(_datePattern) : stamp.getLocaleDate(iwc.getCurrentLocale(), this._dateStyle));
 					date.add(dateText);
