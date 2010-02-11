@@ -1,10 +1,14 @@
 package com.idega.block.calendar.data;
 
 
-import javax.ejb.CreateException;
-import com.idega.data.IDOHome;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Date;
+
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
+import com.idega.data.IDOHome;
 
 public interface CalendarEntryHome extends IDOHome {
 
@@ -17,4 +21,7 @@ public interface CalendarEntryHome extends IDOHome {
 	public CalendarEntry findByPrimaryKey(int id) throws FinderException;
 
 	public CalendarEntry findByPrimaryKeyLegacy(int id) throws SQLException;
+	
+	public Collection findDayEntries(Date date, int[] categoryIDs) throws FinderException;
+
 }

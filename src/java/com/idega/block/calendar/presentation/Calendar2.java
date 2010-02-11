@@ -28,6 +28,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 
@@ -44,6 +45,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 	private String _datePattern = null;
 	private String _timePattern = null;
 	private int _numberOfShown = 6;
+	private boolean _showToday = false;
 
 	private boolean hasEdit = false;
 	private boolean hasAdd = false;
@@ -145,9 +147,17 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		Text headlineText = null;
 		Text bodyText = null;
 		IWTimestamp stamp = null;
+		IWTimestamp endStamp = null;
 		int numberOfShown = 0;
 
-		List entries = CalendarFinder.getInstance().listOfNextEntries(getCategoryIds());
+		List entries = null;
+		if (this._showToday) {
+			entries = CalendarFinder.getInstance().getDayEntries(getCategoryIds());
+		}
+		else {
+			entries = CalendarFinder.getInstance().listOfNextEntries(getCategoryIds());
+		}
+		
 		if (entries != null) {
 			if (entries.size() > this._numberOfShown) {
 				numberOfShown = this._numberOfShown;
@@ -163,6 +173,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 				CalendarEntryType type = entry.getEntryType();
 				localeStrings = CalendarFinder.getInstance().getEntryStrings(entry, this._iLocaleID);
 				stamp = new IWTimestamp(entry.getDate());
+				endStamp = entry.getEndDate() != null ? new IWTimestamp(entry.getEndDate()) : null;
 
 				Layer calendarEntry = new Layer();
 				calendarEntry.setStyleClass("calendarEntry");
@@ -197,22 +208,66 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 						}
 					}
 					
+					Layer startDate = new Layer();
+					startDate.setStyleClass("startDate");
+					calendarEntry.add(startDate);
+					
 					Layer date = new Layer();
 					Text dateText = new Text(_datePattern != null ? stamp.getDateString(_datePattern) : stamp.getLocaleDate(iwc.getCurrentLocale(), this._dateStyle));
 					date.add(dateText);
 					date.setStyleClass("date");
-					calendarEntry.add(date);
+					startDate.add(date);
 
-					Layer time = new Layer();
-					Text timeText = new Text(_timePattern != null ? stamp.getDateString(_timePattern) : stamp.getLocaleTime(iwc.getCurrentLocale(), this._timeStyle));
-					time.add(timeText);
-					time.setStyleClass("time");
-					calendarEntry.add(time);
+					if (!entry.isAllDayEvent()) {
+						Layer time = new Layer();
+						Text timeText = new Text(_timePattern != null ? stamp.getDateString(_timePattern) : stamp.getLocaleTime(iwc.getCurrentLocale(), this._timeStyle));
+						time.add(timeText);
+						time.setStyleClass("time");
+						startDate.add(time);
+					}
+					
+					if (endStamp != null) {
+						Layer endDate = new Layer();
+						endDate.setStyleClass("endDate");
+						calendarEntry.add(endDate);
+						
+						date = new Layer();
+						dateText = new Text(" - " + (_datePattern != null ? endStamp.getDateString(_datePattern) : endStamp.getLocaleDate(iwc.getCurrentLocale(), this._dateStyle)));
+						date.add(dateText);
+						date.setStyleClass("date");
+						endDate.add(date);
+
+						if (!entry.isAllDayEvent()) {
+							Layer time = new Layer();
+							Text timeText = new Text(_timePattern != null ? endStamp.getDateString(_timePattern) : endStamp.getLocaleTime(iwc.getCurrentLocale(), this._timeStyle));
+							time.add(timeText);
+							time.setStyleClass("time");
+							endDate.add(time);
+						}
+					}
 					
 					Layer headline = new Layer();
 					headline.setStyleClass("event");
 					headline.add(headlineText);
 					calendarEntry.add(headline);
+					
+					if (entry.isRepeatEveryYear()) {
+						Layer birthday = new Layer();
+						birthday.setStyleClass("birthday");
+						
+						int age = new Age(stamp.getDate()).getYears();
+						String ageString = String.valueOf(age);
+						
+						String text = ageString + " ";
+						if (ageString.substring(ageString.length() - 1).equals("1")) {
+							text += this._iwrb.getLocalizedString("year_old", "year old");
+						}
+						else {
+							text += this._iwrb.getLocalizedString("years_old", "year old");
+						}
+						birthday.add(new Text(text));
+						calendarEntry.add(birthday);
+					}
 
 					if (bodyText != null && bodyText.getText().length() > 0) {
 						Layer body = new Layer();
@@ -337,6 +392,13 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 	 */
 	public void setCalendarID(String id) {
 		this._id = id;
+	}
+	
+	/**
+	 * Sets to show only today's entries
+	 */
+	public void setShowToday(boolean showToday) {
+		this._showToday = showToday;
 	}
 
 	@Override

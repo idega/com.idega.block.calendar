@@ -106,7 +106,7 @@ public class CalendarBusiness {
 		return drp;
 	}
 
-	public static int saveEntry(int entryID, int userID, int groupID, int localeID, int categoryId, String entryHeadline, String entryBody, String entryDate, String entryEndDate, String entryType) {
+	public static int saveEntry(int entryID, int userID, int groupID, int localeID, int categoryId, String entryHeadline, String entryBody, String entryDate, String entryEndDate, String entryType, boolean allDayEvent, boolean repeatEveryYear) {
 		int returnInt = -1;
 		boolean update = false;
 		if (entryID != -1) {
@@ -132,6 +132,8 @@ public class CalendarBusiness {
 		if (entryEndDate != null && entryEndDate.length() > 0) {
 			entry.setEndDate(new IWTimestamp(entryEndDate).getTimestamp());
 		}
+		entry.setAllDayEvent(allDayEvent);
+		entry.setRepeatEveryYear(repeatEveryYear);
 
 		if (!update) {
 			try {

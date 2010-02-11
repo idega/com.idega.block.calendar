@@ -1,3 +1,4 @@
+all_day_event=Heilsdagsvi\u00F0bur\u00F0ur
 body=Texti
 calendar_admin=Dagatalsf\u00E6rslur
 calendar_type_editor=Dagatalsstj\u00F3ri
@@ -14,7 +15,10 @@ new_image=N\u00FD mynd
 new_type=N\u00FD tegund
 no_access=Engin r\u00E9ttindi
 no_entries=Engar f\u00E6rslur \u00ED dagatali
+repeat_every_year=Endurteki\u00F0 \u00E1 hverju \u00E1ri
 save=Vista
 show_month=S\u00FDna m\u00E1nu\u00F0
 time=T\u00EDmi
 type=Tegund
+year_old=\u00E1rs
+years_old=\u00E1ra

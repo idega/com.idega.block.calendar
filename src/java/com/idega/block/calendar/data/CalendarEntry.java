@@ -42,7 +42,17 @@ public interface CalendarEntry extends CategoryEntity {
 	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#getGroupID
 	 */
 	public int getGroupID();
-
+	
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#isAllDayEvent
+	 */
+	public boolean isAllDayEvent();
+	
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#isRepeatEveryYear
+	 */
+	public boolean isRepeatEveryYear();
+	
 	/**
 	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setEntryTypeID
 	 */
@@ -67,4 +77,14 @@ public interface CalendarEntry extends CategoryEntity {
 	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setGroupID
 	 */
 	public void setGroupID(int groupID);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setAllDayEvent
+	 */
+	public void setAllDayEvent(boolean allDayEvent);
+
+	/**
+	 * @see com.idega.block.calendar.data.CalendarEntryBMPBean#setRepeatEveryYear
+	 */
+	public void setRepeatEveryYear(boolean repeatEveryYear);
 }

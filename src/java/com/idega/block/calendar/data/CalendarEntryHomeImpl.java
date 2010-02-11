@@ -1,9 +1,12 @@
 package com.idega.block.calendar.data;
 
 
-import javax.ejb.CreateException;
 import java.sql.SQLException;
+import java.util.Date;
+
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOFactory;
 
 public class CalendarEntryHomeImpl extends IDOFactory implements CalendarEntryHome {
@@ -40,5 +43,12 @@ public class CalendarEntryHomeImpl extends IDOFactory implements CalendarEntryHo
 		catch (FinderException fe) {
 			throw new SQLException(fe.getMessage());
 		}
+	}
+		
+	public java.util.Collection findDayEntries(Date date, int[] categoryIDs) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindDayEntries(date, categoryIDs);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 }

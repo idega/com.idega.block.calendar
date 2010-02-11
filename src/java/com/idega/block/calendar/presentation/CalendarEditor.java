@@ -16,6 +16,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.HiddenInput;
@@ -37,12 +38,14 @@ public class CalendarEditor extends IWAdminWindow {
 	private int _instanceID = -1;
 	private IWTimestamp _stamp;
 	private IWTimestamp _endStamp;
+	private boolean _allDayEvent = false;
+	private boolean _repeatEveryYear = false;
 
 	private IWResourceBundle _iwrb;
 
 	public CalendarEditor() {
 		setWidth(550);
-		setHeight(420);
+		setHeight(500);
 		setUnMerged();
 	}
 
@@ -128,6 +131,14 @@ public class CalendarEditor extends IWAdminWindow {
 			}
 		}
 		
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_ALL_DAY_EVENT)) {
+			this._allDayEvent = true;
+		}
+
+		if (iwc.isParameterSet(CalendarParameters.PARAMETER_REPEAT_EVERY_YEAR)) {
+			this._repeatEveryYear = true;
+		}
+		
 		if (iwc.getParameter(CalendarParameters.PARAMETER_MODE) != null) {
 			if (iwc.getParameter(CalendarParameters.PARAMETER_MODE).equalsIgnoreCase(CalendarParameters.PARAMETER_MODE_CLOSE)) {
 				closeEditor(iwc);
@@ -178,6 +189,8 @@ public class CalendarEditor extends IWAdminWindow {
 			if (entry.getEndDate() != null) {
 				this._endStamp = new IWTimestamp(entry.getEndDate());
 			}
+			this._allDayEvent = entry.isAllDayEvent();
+			this._repeatEveryYear = entry.isRepeatEveryYear();
 		}
 
 		DropdownMenu categories = CalendarBusiness.getCategories(CalendarParameters.PARAMETER_IC_CAT, iwc.getCurrentLocale(), this._instanceID);
@@ -209,7 +222,7 @@ public class CalendarEditor extends IWAdminWindow {
 
 		IWTimestamp stamp = new IWTimestamp();
 		TimestampInput entryDate = new TimestampInput(CalendarParameters.PARAMETER_ENTRY_DATE);
-		entryDate.setYearRange(stamp.getYear() - 5, stamp.getYear() + 10);
+		entryDate.setYearRange(stamp.getYear() - 125, stamp.getYear() + 5);
 		if (this._stamp == null) {
 			this._stamp = IWTimestamp.RightNow();
 		}
@@ -217,14 +230,22 @@ public class CalendarEditor extends IWAdminWindow {
 		entryDate.setStyleAttribute(STYLE);
 
 		TimestampInput entryEndDate = new TimestampInput(CalendarParameters.PARAMETER_ENTRY_END_DATE);
-		entryEndDate.setYearRange(stamp.getYear() - 5, stamp.getYear() + 10);
+		entryEndDate.setYearRange(stamp.getYear() - 125, stamp.getYear() + 5);
 		if (this._endStamp != null) {
 			entryEndDate.setTimestamp(this._endStamp.getTimestamp());
 		}
 		entryEndDate.setStyleAttribute(STYLE);
+		
+		CheckBox allDayEvent = new CheckBox(CalendarParameters.PARAMETER_ALL_DAY_EVENT, Boolean.TRUE.toString());
+		allDayEvent.setChecked(this._allDayEvent);
+		
+		CheckBox repeatEveryYear = new CheckBox(CalendarParameters.PARAMETER_REPEAT_EVERY_YEAR, Boolean.TRUE.toString());
+		repeatEveryYear.setChecked(this._repeatEveryYear);
 
 		addLeft(this._iwrb.getLocalizedString("date_start", "Start date") + ":", entryDate, true);
 		addLeft(this._iwrb.getLocalizedString("date_end", "End date") + ":", entryEndDate, true);
+		addInverseLeft(this._iwrb.getLocalizedString("all_day_event", "All day event"), allDayEvent, false);
+		addInverseLeft(this._iwrb.getLocalizedString("repeat_every_year", "Repeat every year"), repeatEveryYear, false);
 		addHiddenInput(new HiddenInput(CalendarParameters.PARAMETER_IC_CAT, String.valueOf(iCategoryId)));
 		addHiddenInput(new HiddenInput(CalendarParameters.PARAMETER_INSTANCE_ID, String.valueOf(this._instanceID)));
 		addSubmitButton(new SubmitButton(this._iwrb.getLocalizedImageButton("close", "CLOSE"), CalendarParameters.PARAMETER_MODE, CalendarParameters.PARAMETER_MODE_CLOSE));
@@ -237,8 +258,10 @@ public class CalendarEditor extends IWAdminWindow {
 		String entryDate = iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_DATE);
 		String entryEndDate = iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_END_DATE);
 		String entryType = iwc.getParameter(CalendarParameters.PARAMETER_TYPE_ID);
+		boolean allDayEvent = iwc.isParameterSet(CalendarParameters.PARAMETER_ALL_DAY_EVENT);
+		boolean repeatEveryYear = iwc.isParameterSet(CalendarParameters.PARAMETER_REPEAT_EVERY_YEAR);
 
-		int entryID = CalendarBusiness.saveEntry(this._entryID, this._userID, this._groupID, localeID, categoryId, entryHeadline, entryBody, entryDate, entryEndDate, entryType);
+		int entryID = CalendarBusiness.saveEntry(this._entryID, this._userID, this._groupID, localeID, categoryId, entryHeadline, entryBody, entryDate, entryEndDate, entryType, allDayEvent, repeatEveryYear);
 		iwc.setSessionAttribute(CalendarParameters.PARAMETER_ENTRY_ID, Integer.toString(entryID));
 		IWCacheManager.getInstance(iwc.getIWMainApplication()).invalidateCache(Calendar.CACHE_KEY);
 	}

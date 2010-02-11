@@ -1,4 +1,4 @@
-=
+all_day_event=All day event
 body=Texti
 calendar_admin=Dagatalsf\u00E6rslur
 calendar_type_editor=Dagatalsstj\u00F3ri
@@ -21,8 +21,11 @@ new_image=N\u00FD mynd
 new_type=N\u00FD tegund
 no_access=Engin r\u00E9ttindi
 no_entries=Engar f\u00E6rslur \u00ED dagatali
+repeat_every_year=Repeat every year
 save=Spara
 show_month=S\u00FDna m\u00E1nu\u00F0
 time=Tid
 type=Tegund
+year_old=year old
+years_old=year old
 yes=YES

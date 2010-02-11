@@ -10,14 +10,22 @@ package com.idega.block.calendar.business;
  */
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import com.idega.block.calendar.data.*;
+
+import javax.ejb.FinderException;
+
+import com.idega.block.calendar.data.CalendarEntry;
+import com.idega.block.calendar.data.CalendarEntryHome;
+import com.idega.block.calendar.data.CalendarEntryType;
 import com.idega.block.category.data.CategoryEntityBMPBean;
-import com.idega.data.EntityFinder;
-import com.idega.data.GenericEntity;
-import com.idega.util.IWTimestamp;
 import com.idega.block.text.business.TextFinder;
 import com.idega.block.text.data.LocalizedText;
+import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.util.IWTimestamp;
 
 public class CalendarFinder {
 
@@ -222,6 +230,20 @@ public class CalendarFinder {
 
 		}
 		return null;
+	}
+	
+	public List getDayEntries(int[] categoryIDs) {
+		try {
+			CalendarEntryHome home = (CalendarEntryHome) IDOLookup.getHome(CalendarEntry.class);
+			return new ArrayList(home.findDayEntries(new IWTimestamp().getDate(), categoryIDs));
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList();
 	}
 
 	public List getMonthEntries(IWTimestamp stamp, int[] iCategoryIds) {
