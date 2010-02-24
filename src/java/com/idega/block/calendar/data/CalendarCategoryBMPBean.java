@@ -16,7 +16,6 @@ public class CalendarCategoryBMPBean extends com.idega.block.category.data.ICCat
   public CalendarCategoryBMPBean(){
     super();
   }
-  
   public CalendarCategoryBMPBean(int id)throws SQLException{
     super(id);
   }
