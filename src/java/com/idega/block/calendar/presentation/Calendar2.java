@@ -9,9 +9,11 @@ package com.idega.block.calendar.presentation;
  */
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import com.idega.block.calendar.business.CalendarBusiness;
+import com.idega.block.calendar.business.CalendarComparator;
 import com.idega.block.calendar.business.CalendarFinder;
 import com.idega.block.calendar.data.CalendarCategory;
 import com.idega.block.calendar.data.CalendarEntry;
@@ -149,6 +151,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		IWTimestamp stamp = null;
 		IWTimestamp endStamp = null;
 		int numberOfShown = 0;
+		IWTimestamp now = new IWTimestamp();
 
 		List entries = null;
 		if (this._showToday) {
@@ -156,7 +159,24 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		}
 		else {
 			entries = CalendarFinder.getInstance().listOfNextEntries(getCategoryIds());
+			
+			List<CalendarEntry> repeated = CalendarFinder.getInstance().getRepeatedEntries(getCategoryIds());
+			for (CalendarEntry calendarEntry : repeated) {
+				IWTimestamp date = new IWTimestamp(calendarEntry.getDate());
+				boolean add = false;
+				if (date.getMonth() >= now.getMonth()) {
+					if ((date.getMonth() == now.getMonth() && date.getDay() >= now.getDay()) || date.getMonth() > now.getMonth()) {
+						add = true;
+					}
+				}
+				
+				if (add && !entries.contains(calendarEntry)) {
+					entries.add(calendarEntry);
+				}
+			}
 		}
+		
+		Collections.sort(entries, new CalendarComparator());
 		
 		if (entries != null) {
 			if (entries.size() > this._numberOfShown) {
@@ -300,7 +320,6 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		link.setWindowToOpen(CalendarEditor.class);
 		link.addParameter(CalendarParameters.PARAMETER_IC_CAT, getCategoryId());
 		link.addParameter(CalendarParameters.PARAMETER_INSTANCE_ID, getICObjectInstanceID());
-		link.setID("calendarAdd");
 		return link;
 	}
 
@@ -308,7 +327,6 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		Image image = this._iwb.getImage("shared/text.gif", "Types");
 		Link link = new Link(image);
 		link.setWindowToOpen(CalendarTypeEditor.class);
-		link.setID("calendarProperties");
 		return link;
 	}
 
@@ -316,7 +334,6 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		Image image = this._iwb.getImage("shared/edit.gif", "Categories");
 		Link link = getCategoryLink(((com.idega.block.calendar.data.CalendarCategoryHome) com.idega.data.IDOLookup.getHomeLegacy(CalendarCategory.class)).createLegacy().getCategoryType());
 		link.setImage(image);
-		link.setID("calendarCategory");
 		return link;
 	}
 

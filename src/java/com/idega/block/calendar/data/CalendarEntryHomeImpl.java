@@ -51,4 +51,11 @@ public class CalendarEntryHomeImpl extends IDOFactory implements CalendarEntryHo
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+	
+	public java.util.Collection findRepeatedEntries(int[] categoryIDs) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindRepeatedEntries(categoryIDs);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }

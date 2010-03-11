@@ -14,7 +14,6 @@ import com.idega.block.category.data.Category;
 import com.idega.block.category.data.CategoryEntityBMPBean;
 import com.idega.block.text.data.LocalizedText;
 import com.idega.data.GenericEntity;
-import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.query.AND;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
@@ -182,23 +181,29 @@ public class CalendarEntryBMPBean extends CategoryEntityBMPBean implements Calen
 		Table table = new Table(this);
 		
 		SelectQuery query = new SelectQuery(table);
-		try {
-			query.addColumn(table, table.getPrimaryKeyColumnName());
-		}
-		catch (IDOCompositePrimaryKeyException e) {
-			e.printStackTrace();
-		}
+		query.addColumn(table, getIDColumnName());
 		query.addCriteria(new InCriteria(table.getColumn(getColumnCategoryId()), categoryIDs));
 		
 		IWTimestamp stamp = new IWTimestamp(date);
 		
-		AND and1 = new AND(new MatchCriteria(table.getColumn(getColumnNameEntryDate()), MatchCriteria.LIKE, "%" + stamp.getDateString("-MM-dd")), new MatchCriteria(table.getColumn(getColumnNameRepeatsEveryYear()), MatchCriteria.EQUALS, true));
+		AND and1 = new AND(new MatchCriteria(table.getColumn(getColumnNameEntryDate()), MatchCriteria.LIKE, "%" + stamp.getDateString("-MM-dd") + "%"), new MatchCriteria(table.getColumn(getColumnNameRepeatsEveryYear()), MatchCriteria.EQUALS, true));
 		OR or1 = new OR(and1, new MatchCriteria(table.getColumn(getColumnNameEntryDate()), MatchCriteria.LIKE, stamp.getDateString("yyyy-MM-dd") + "%"));
 		
 		AND and2 = new AND(new MatchCriteria(table.getColumn(getColumnNameEntryDate()), MatchCriteria.LESSEQUAL, stamp.getDateString("yyyy-MM-dd")), new MatchCriteria(table.getColumn(getColumnNameEntryEndDate()), MatchCriteria.GREATEREQUAL, stamp.getDateString("yyyy-MM-dd")));
 		OR or2 = new OR(or1, and2);
 		
 		query.addCriteria(or2);
+		
+		return idoFindPKsByQuery(query);
+	}
+	
+	public Collection ejbFindRepeatedEntries(int[] categoryIDs) throws FinderException {
+		Table table = new Table(this);
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table, getIDColumnName());
+		query.addCriteria(new InCriteria(table.getColumn(getColumnCategoryId()), categoryIDs));
+		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameRepeatsEveryYear()), MatchCriteria.EQUALS, true));
 		
 		return idoFindPKsByQuery(query);
 	}

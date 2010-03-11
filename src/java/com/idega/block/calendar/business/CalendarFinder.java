@@ -245,6 +245,20 @@ public class CalendarFinder {
 		}
 		return new ArrayList();
 	}
+	
+	public List getRepeatedEntries(int[] categoryIDs) {
+		try {
+			CalendarEntryHome home = (CalendarEntryHome) IDOLookup.getHome(CalendarEntry.class);
+			return new ArrayList(home.findRepeatedEntries(categoryIDs));
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList();
+	}
 
 	public List getMonthEntries(IWTimestamp stamp, int[] iCategoryIds) {
 		try {
@@ -289,7 +303,6 @@ public class CalendarFinder {
 							.getColumnNameEntryDate());
 			// System.err.println(sql.toString());
 
-			System.out.println("sql = " + sql.toString());
 			return EntityFinder.findAll(
 					com.idega.block.calendar.data.CalendarEntryBMPBean
 							.getStaticInstance(), sql.toString());

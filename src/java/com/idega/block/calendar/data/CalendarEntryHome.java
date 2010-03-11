@@ -24,4 +24,5 @@ public interface CalendarEntryHome extends IDOHome {
 	
 	public Collection findDayEntries(Date date, int[] categoryIDs) throws FinderException;
 
+	public Collection findRepeatedEntries(int[] categoryIDs) throws FinderException;
 }
