@@ -9,6 +9,7 @@ package com.idega.block.calendar.presentation;
  */
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -159,6 +160,9 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 		}
 		else {
 			entries = CalendarFinder.getInstance().listOfNextEntries(getCategoryIds());
+			if (entries == null) {
+				entries = new ArrayList();
+			}
 			
 			List<CalendarEntry> repeated = CalendarFinder.getInstance().getRepeatedEntries(getCategoryIds());
 			for (CalendarEntry calendarEntry : repeated) {
