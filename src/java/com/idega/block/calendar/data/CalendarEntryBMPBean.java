@@ -182,7 +182,9 @@ public class CalendarEntryBMPBean extends CategoryEntityBMPBean implements Calen
 		
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table, getIDColumnName());
-		query.addCriteria(new InCriteria(table.getColumn(getColumnCategoryId()), categoryIDs));
+		if (categoryIDs != null && categoryIDs.length > 0) {
+			query.addCriteria(new InCriteria(table.getColumn(getColumnCategoryId()), categoryIDs));
+		}
 		
 		IWTimestamp stamp = new IWTimestamp(date);
 		
