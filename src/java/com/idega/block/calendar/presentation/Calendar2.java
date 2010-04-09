@@ -280,6 +280,9 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 						birthday.setStyleClass("birthday");
 						
 						int age = new Age(stamp.getDate()).getYears();
+						if (!this._showToday) {
+							age++;
+						}
 						String ageString = String.valueOf(age);
 						
 						String text = ageString + " ";
