@@ -31,7 +31,6 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 
@@ -167,14 +166,24 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 			List<CalendarEntry> repeated = CalendarFinder.getInstance().getRepeatedEntries(getCategoryIds());
 			for (CalendarEntry calendarEntry : repeated) {
 				IWTimestamp date = new IWTimestamp(calendarEntry.getDate());
-				boolean add = false;
+				calendarEntry.setEndDate(calendarEntry.getDate());
+				date.setYear(now.getYear());
+				
 				if (date.getMonth() >= now.getMonth()) {
 					if ((date.getMonth() == now.getMonth() && date.getDay() >= now.getDay()) || date.getMonth() > now.getMonth()) {
-						add = true;
+						calendarEntry.setDate(date.getTimestamp());
+					}
+					else {
+						date.addYears(1);
+						calendarEntry.setDate(date.getTimestamp());
 					}
 				}
+				else {
+					date.addYears(1);
+					calendarEntry.setDate(date.getTimestamp());
+				}
 				
-				if (add && !entries.contains(calendarEntry)) {
+				if (!entries.contains(calendarEntry)) {
 					entries.add(calendarEntry);
 				}
 			}
@@ -250,7 +259,7 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 						startDate.add(time);
 					}
 					
-					if (endStamp != null) {
+					if (endStamp != null && !entry.isRepeatEveryYear()) {
 						Layer endDate = new Layer();
 						endDate.setStyleClass("endDate");
 						calendarEntry.add(endDate);
@@ -279,14 +288,11 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 						Layer birthday = new Layer();
 						birthday.setStyleClass("birthday");
 						
-						int age = new Age(stamp.getDate()).getYears();
-						if (!this._showToday) {
-							age++;
-						}
+						int age = stamp.getYear() - endStamp.getYear();
 						String ageString = String.valueOf(age);
 						
 						String text = ageString + " ";
-						if (ageString.substring(ageString.length() - 1).equals("1")) {
+						if (ageString.substring(ageString.length() - 1).equals("1") && ageString.indexOf("11") == -1) {
 							text += this._iwrb.getLocalizedString("year_old", "year old");
 						}
 						else {

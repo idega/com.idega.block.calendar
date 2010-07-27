@@ -199,6 +199,7 @@ public class CalendarFinder {
 	public List listOfNextEntries(int[] iCategoryIds) {
 		try {
 			IWTimestamp stamp = new IWTimestamp();
+			stamp.addDays(1);
 
 			StringBuffer sql = new StringBuffer("select * from ")
 					.append(com.idega.block.calendar.data.CalendarEntryBMPBean
