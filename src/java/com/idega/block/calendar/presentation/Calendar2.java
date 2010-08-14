@@ -288,7 +288,13 @@ public class Calendar2 extends CategoryBlock implements Builderaware {
 						Layer birthday = new Layer();
 						birthday.setStyleClass("birthday");
 						
-						int age = stamp.getYear() - endStamp.getYear();
+						int age = -1;
+						if (this._showToday) {
+							age = now.getYear() - stamp.getYear();
+						}
+						else {
+							age = stamp.getYear() - endStamp.getYear();
+						}
 						String ageString = String.valueOf(age);
 						
 						String text = ageString + " ";
