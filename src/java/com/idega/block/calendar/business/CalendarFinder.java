@@ -207,7 +207,7 @@ public class CalendarFinder {
 			sql.append(" where ").append(
 					com.idega.block.calendar.data.CalendarEntryBMPBean
 							.getColumnNameEntryDate()).append(" >= '").append(
-					stamp.toString()).append("'");
+					stamp.toSQLDateString()).append("'");
 			if (iCategoryIds.length > 0) {
 				sql.append(" and ").append(
 						CategoryEntityBMPBean.getColumnCategoryId()).append(
