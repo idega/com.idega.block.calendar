@@ -50,14 +50,18 @@
       <groupId>com.idega.block.addon</groupId>
       <artifactId>com.idega.block.category</artifactId>
      </dependency>
+     <dependency>
+      <groupId>com.idega.block.addon</groupId>
+      <artifactId>com.idega.block.oauth2.client</artifactId>
+     </dependency>
     <dependency>
       <groupId>com.idega.block.addon</groupId>
       <artifactId>com.idega.block.text</artifactId>
      </dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-calendar</artifactId>
-			<version>v3-rev46-1.15.0-rc</version>
+      		<artifactId>google-api-services-calendar</artifactId>
+      		<version>v3-rev145-1.20.0</version>
 		</dependency>
 	</dependencies>
 </project>
