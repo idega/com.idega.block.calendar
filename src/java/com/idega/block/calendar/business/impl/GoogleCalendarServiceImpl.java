@@ -82,13 +82,18 @@
  */
 package com.idega.block.calendar.business.impl;
 
+import java.io.IOException;
+import java.util.logging.Level;
+
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.AclRule;
+import com.google.api.services.calendar.model.AclRule.Scope;
 import com.idega.block.calendar.business.GoogleCalendarService;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.util.StringUtil;
 
 /**
  * <p>TODO</p>
@@ -99,12 +104,31 @@ import com.idega.core.business.DefaultSpringBean;
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
 @Service(GoogleCalendarService.BEAN_NAME)
-@Scope(BeanDefinition.SCOPE_SINGLETON)
+@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
 public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
 		GoogleCalendarService {
-	
-	public Calendar getCalendar(String calendarName) {
+
+	@Override
+	public AclRule publish(
+			String calendarId, 
+			Calendar calendarService) {
+		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
+			Scope scope = new Scope();
+			scope.setType("default");
+
+			AclRule rule = new AclRule();
+			rule.setScope(scope);
+			rule.setRole("reader");
+
+			// Insert new access rule
+			try {
+				return calendarService.acl().insert(calendarId, rule).execute();
+			} catch (IOException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
+			}
+		}
+
 		return null;
 	}
-	
 }
