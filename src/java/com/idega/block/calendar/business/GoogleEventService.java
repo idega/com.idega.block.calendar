@@ -86,6 +86,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.idega.user.data.bean.User;
@@ -123,4 +124,16 @@ public interface GoogleEventService {
 
 	List<EventAttendee> getLegacyAttendees(
 			Collection<com.idega.user.data.User> users);
+
+	/**
+	 * 
+	 * <p>Removed event or whole recurrence, if exist.</p>
+	 * @param calendarService 
+	 * @param eventId is {@link Event#getId()}, not <code>null</code>;
+	 * @param calendarId is {@link com.google.api.services.calendar.model.Calendar#getId()}, 
+	 * not <code>null</code>;
+	 * @return <code>true</code> on successful removal, 
+	 * <code>false</code> otherwise;
+	 */
+	boolean remove(Calendar calendarService, String eventId, String calendarId);
 }

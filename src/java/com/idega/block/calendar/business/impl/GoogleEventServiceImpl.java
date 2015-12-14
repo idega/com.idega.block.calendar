@@ -82,20 +82,24 @@
  */
 package com.idega.block.calendar.business.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.idega.block.calendar.business.GoogleEventService;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -189,5 +193,32 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		}
 
 		return attendees;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.business.GoogleEventService#remove(com.google.api.services.calendar.Calendar, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean remove(
+			Calendar calendarService, 
+			String eventId, 
+			String calendarId) {
+		if (	calendarService != null && 
+				!StringUtil.isEmpty(eventId) && 
+				!StringUtil.isEmpty(calendarId)) {
+			try {
+				calendarService.events().delete(calendarId, eventId).execute();
+				return Boolean.TRUE;
+			} catch (IOException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to remove event by id: " + eventId + 
+						" from calendar by id: " + calendarId + 
+						" cause of: ", e);
+			}
+		}
+
+		return Boolean.FALSE;
 	}
 }

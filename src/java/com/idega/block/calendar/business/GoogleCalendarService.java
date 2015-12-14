@@ -104,7 +104,6 @@ public interface GoogleCalendarService {
 	 * not <code>null</code>;
 	 * @param calendarService to create calendar to, not <code>null</code>;
 	 * @return created rule or <code>null</code> on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	AclRule publish(String calendarId, Calendar calendarService);
 	
