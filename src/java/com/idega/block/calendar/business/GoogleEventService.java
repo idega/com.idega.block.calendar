@@ -89,6 +89,7 @@ import java.util.List;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
+import com.idega.block.calendar.bean.Recurrence;
 import com.idega.user.data.bean.User;
 
 /**
@@ -136,4 +137,22 @@ public interface GoogleEventService {
 	 * <code>false</code> otherwise;
 	 */
 	boolean remove(Calendar calendarService, String eventId, String calendarId);
+
+	/**
+	 *
+	 * @param calendarId is Google Calendar id, not <code>null</code>;
+	 * @param eventId is Google event id, not <code>null</code>;
+	 * @return event created or <code>null</code> on failure;
+	 */
+	Event getEvent(Calendar calendarService, String calendarId, String eventId);
+
+	/**
+	 * 
+	 * <p>Creates custom line to define recurrence in Google calendar</p>
+	 * @param recurrence to define, not <code>null</code>;
+	 * @return recurrence lines for adding to {@link Event#setRecurrence(List)}
+	 * or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	List<String> getRecurrenceString(Recurrence recurrence);
 }

@@ -83,6 +83,7 @@
 package com.idega.block.calendar.business.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -94,13 +95,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
+import com.idega.block.calendar.bean.Recurrence;
+import com.idega.block.calendar.bean.Weekdays;
 import com.idega.block.calendar.business.GoogleEventService;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.timer.DateUtil;
 
 /**
  * <p>You can report about problems to: 
@@ -122,6 +127,146 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		}
 
 		return this.userDAO;
+	}
+
+	@Override
+	public List<String> getRecurrenceString(Recurrence recurrence) {
+		List<String> recurrenceList = null;
+
+		if (recurrence != null) {
+			recurrenceList = new ArrayList<String>();
+
+			/*
+			 * None recurrence
+			 */
+			if (recurrence.getType().equalsIgnoreCase("NONE")) {
+				return recurrenceList;
+			}
+
+			//*** Exclude dates list ***
+			/* if (calendarEventData.getExcludeDateList() != null && !calendarEventData.getExcludeDateList().isEmpty()) {
+				String datesExcludeString = "EXDATE:";
+				for (DatesFromTo datesFromTo : calendarEventData.getExcludeDateList()) {
+					if (datesFromTo != null) {
+						LocalDate excludeStartDate = LocalDate.parse(datesFromTo.getDateFrom());
+						LocalDate excludeEndDate = LocalDate.parse(datesFromTo.getDateTo());
+						List<LocalDate> excludeDatesBetweenGivenDates = new ArrayList<LocalDate>();
+						while (!excludeStartDate.isAfter(excludeEndDate)) {
+							excludeDatesBetweenGivenDates.add(excludeStartDate);
+							excludeStartDate = excludeStartDate.plusDays(1);
+						}
+						if (excludeDatesBetweenGivenDates != null && !excludeDatesBetweenGivenDates.isEmpty()) {
+							for (LocalDate localDate : excludeDatesBetweenGivenDates) {
+								if (!datesExcludeString.equalsIgnoreCase("EXDATE:")) {
+									datesExcludeString += CoreConstants.COMMA;
+								}
+								DateTimeFormatter dtf = DateTimeFormatter.ofPattern(MemberConstants.DATE_FORMAT_NO_SEPARATORS_STRING);
+								datesExcludeString += localDate.format(dtf);
+								//datesExcludeString += localDate.toString().replaceAll(CoreConstants.MINUS, CoreConstants.EMPTY);
+								datesExcludeString += "T000000Z";
+							}
+						}
+					}
+				}
+				recurrenceList.add(datesExcludeString);
+			} */
+
+			String recurrenceString = null;
+
+			/*
+			 * Daily recurrence
+			 */
+			if (recurrence.getType().equalsIgnoreCase("DAILY")) {
+				recurrenceString = "RRULE:FREQ=DAILY";
+				if (recurrence.getRate() != null) {
+					recurrenceString += ";INTERVAL=";
+					recurrenceString += recurrence.getRate();
+				}
+
+				recurrenceList.add(recurrenceString);
+			}
+
+			/*
+			 * Weekly recurrence
+			 */
+			if (recurrence.getType().equalsIgnoreCase("WEEKLY")) {
+				recurrenceString = "RRULE:FREQ=WEEKLY;WKST=MO";
+				if (recurrence.getRate() != null) {
+					recurrenceString += ";INTERVAL=";
+					recurrenceString += recurrence.getRate();
+				}
+
+				Weekdays weekdays = recurrence.getWeekDays();
+				if (weekdays != null && !ListUtil.isEmpty(weekdays.getSelectedDays())) {
+					recurrenceString += ";BYDAY=";
+					recurrenceString += weekdays.toString();
+				}
+
+				recurrenceList.add(recurrenceString);
+			}
+
+			/*
+			 * Monthly recurrence
+			 */
+			if (recurrence.getType().equalsIgnoreCase("MONTHLY")) {
+				recurrenceString = "RRULE:FREQ=MONTHLY";
+				if (recurrence.getRate() != null) {
+					recurrenceString += ";INTERVAL=";
+					recurrenceString += recurrence.getRate();
+				}
+
+				LocalDate date = DateUtil.getDate(recurrence.getFrom());
+				if (date != null) {
+					recurrenceString += ";BYMONTHDAY=";
+					recurrenceString += date.getDayOfMonth();
+				}
+
+				recurrenceList.add(recurrenceString);
+			}
+
+			/*
+			 * Yearly
+			 */
+			if (recurrence.getType().equalsIgnoreCase("YEARLY")) {
+				recurrenceString = "RRULE:FREQ=YEARLY";
+				if (recurrence.getRate() != null) {
+					recurrenceString += ";INTERVAL=";
+					recurrenceString += recurrence.getRate();
+				}
+
+				LocalDate date = DateUtil.getDate(recurrence.getFrom());
+				if (date != null) {
+					recurrenceString += ";BYMONTH=";
+					recurrenceString += date.getMonth();
+					recurrenceString += ";BYMONTHDAY=";
+					recurrenceString += date.getDayOfMonth();
+				}
+
+				recurrenceList.add(recurrenceString);
+			}
+		}
+
+		return recurrenceList;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.business.GoogleEventService#getEvent(com.google.api.services.calendar.Calendar, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Event getEvent(Calendar calendarService, String calendarId, String eventId) {
+		if (calendarService != null && !StringUtil.isEmpty(eventId) && !StringUtil.isEmpty(calendarId)) {
+			try {
+				return calendarService.events().get(calendarId, eventId).execute();
+			} catch (IOException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, "Failed to get event by event id: " + eventId +
+						" and calendar id: " + calendarId +
+						" cause of: " , e);
+			}
+		}
+
+		return null;
 	}
 
 	/*
