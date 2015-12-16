@@ -84,6 +84,7 @@ package com.idega.block.calendar.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,6 +92,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 
 /**
  * <p>Days of week selected</p>
@@ -172,6 +174,45 @@ public class Weekdays {
 
 	public void setSundaySelected(boolean sundaySelected) {
 		this.sundaySelected = sundaySelected;
+	}
+
+	public void setSelectedValues(Set<Integer> selectedValues) {
+		if (!ListUtil.isEmpty(selectedValues)) {
+			for (Integer selectedValue : selectedValues) {
+				switch (selectedValue) {
+				case 1:
+					setMondaySelected(Boolean.TRUE);
+					break;
+
+				case 2:
+					setTuesdaySelected(Boolean.TRUE);
+					break;
+
+				case 3:
+					setWednesdaySelected(Boolean.TRUE);
+					break;
+
+				case 4:
+					setThursdaySelected(Boolean.TRUE);
+					break;
+
+				case 5:
+					setFridaySelected(Boolean.TRUE);
+					break;
+
+				case 6:
+					setSaturdaySelected(Boolean.TRUE);
+					break;
+
+				case 7:
+					setSundaySelected(Boolean.TRUE);
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
 	}
 
 	public TreeSet<Integer> getSelectedValues() {
