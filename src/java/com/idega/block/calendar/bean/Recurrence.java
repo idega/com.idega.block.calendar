@@ -82,7 +82,9 @@
  */
 package com.idega.block.calendar.bean;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -109,6 +111,8 @@ public class Recurrence {
 	private Date from;
 
 	private Date to;
+
+	private List<ExcludedPeriod> excludedPeriods = new ArrayList<ExcludedPeriod>();
 
 	/**
 	 * 
@@ -202,5 +206,13 @@ public class Recurrence {
 	 */
 	public void setTo(Date to) {
 		this.to = to;
+	}
+
+	public List<ExcludedPeriod> getExcludedPeriods() {
+		return excludedPeriods;
+	}
+
+	public void setExcludedPeriods(List<ExcludedPeriod> excludedPeriods) {
+		this.excludedPeriods = excludedPeriods;
 	}
 }
