@@ -84,6 +84,7 @@ package com.idega.block.calendar.business.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -97,11 +98,13 @@ import org.springframework.stereotype.Service;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
+import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
 import com.idega.block.calendar.bean.Weekdays;
 import com.idega.block.calendar.business.GoogleEventService;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -118,6 +121,8 @@ import com.idega.util.timer.DateUtil;
 @Service
 public class GoogleEventServiceImpl implements GoogleEventService {
 
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+	
 	@Autowired
 	private UserDAO userDAO;
 
@@ -144,106 +149,101 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 			}
 
 			//*** Exclude dates list ***
-			/* if (calendarEventData.getExcludeDateList() != null && !calendarEventData.getExcludeDateList().isEmpty()) {
+			if (!ListUtil.isEmpty(recurrence.getExcludedPeriods())) {
 				String datesExcludeString = "EXDATE:";
-				for (DatesFromTo datesFromTo : calendarEventData.getExcludeDateList()) {
-					if (datesFromTo != null) {
-						LocalDate excludeStartDate = LocalDate.parse(datesFromTo.getDateFrom());
-						LocalDate excludeEndDate = LocalDate.parse(datesFromTo.getDateTo());
-						List<LocalDate> excludeDatesBetweenGivenDates = new ArrayList<LocalDate>();
-						while (!excludeStartDate.isAfter(excludeEndDate)) {
-							excludeDatesBetweenGivenDates.add(excludeStartDate);
-							excludeStartDate = excludeStartDate.plusDays(1);
+				for (ExcludedPeriod period : recurrence.getExcludedPeriods()) {
+					LocalDate periodStart = DateUtil.getDate(period.getFrom());
+					LocalDate periodEnd = DateUtil.getDate(period.getTo());
+
+					/*
+					 * All days in between
+					 */
+					List<LocalDate> excludedDates = new ArrayList<LocalDate>();
+					while (!periodStart.isAfter(periodEnd)) {
+						excludedDates.add(periodStart);
+						periodStart = periodStart.plusDays(1);
+					}
+
+					for (LocalDate localDate : excludedDates) {
+						if (!datesExcludeString.equalsIgnoreCase("EXDATE:")) {
+							datesExcludeString += CoreConstants.COMMA;
 						}
-						if (excludeDatesBetweenGivenDates != null && !excludeDatesBetweenGivenDates.isEmpty()) {
-							for (LocalDate localDate : excludeDatesBetweenGivenDates) {
-								if (!datesExcludeString.equalsIgnoreCase("EXDATE:")) {
-									datesExcludeString += CoreConstants.COMMA;
-								}
-								DateTimeFormatter dtf = DateTimeFormatter.ofPattern(MemberConstants.DATE_FORMAT_NO_SEPARATORS_STRING);
-								datesExcludeString += localDate.format(dtf);
-								//datesExcludeString += localDate.toString().replaceAll(CoreConstants.MINUS, CoreConstants.EMPTY);
-								datesExcludeString += "T000000Z";
-							}
-						}
+
+						datesExcludeString += localDate.format(FORMATTER);
+						datesExcludeString += "T000000Z";
 					}
 				}
-				recurrenceList.add(datesExcludeString);
-			} */
 
-			String recurrenceString = null;
+				recurrenceList.add(datesExcludeString);
+			}
+
+			StringBuilder recurrenceString = new StringBuilder();
 
 			/*
 			 * Daily recurrence
 			 */
 			if (recurrence.getType().equalsIgnoreCase("DAILY")) {
-				recurrenceString = "RRULE:FREQ=DAILY";
+				recurrenceString.append("RRULE:FREQ=DAILY");
 				if (recurrence.getRate() != null) {
-					recurrenceString += ";INTERVAL=";
-					recurrenceString += recurrence.getRate();
+					recurrenceString.append(";INTERVAL=").append(recurrence.getRate());
 				}
-
-				recurrenceList.add(recurrenceString);
 			}
 
 			/*
 			 * Weekly recurrence
 			 */
 			if (recurrence.getType().equalsIgnoreCase("WEEKLY")) {
-				recurrenceString = "RRULE:FREQ=WEEKLY;WKST=MO";
+				recurrenceString.append("RRULE:FREQ=WEEKLY;WKST=MO");
 				if (recurrence.getRate() != null) {
-					recurrenceString += ";INTERVAL=";
-					recurrenceString += recurrence.getRate();
+					recurrenceString.append(";INTERVAL=").append(recurrence.getRate());
 				}
 
 				Weekdays weekdays = recurrence.getWeekDays();
 				if (weekdays != null && !ListUtil.isEmpty(weekdays.getSelectedDays())) {
-					recurrenceString += ";BYDAY=";
-					recurrenceString += weekdays.toString();
+					recurrenceString.append(";BYDAY=").append(weekdays.toString());
 				}
-
-				recurrenceList.add(recurrenceString);
 			}
 
 			/*
 			 * Monthly recurrence
 			 */
 			if (recurrence.getType().equalsIgnoreCase("MONTHLY")) {
-				recurrenceString = "RRULE:FREQ=MONTHLY";
+				recurrenceString.append("RRULE:FREQ=MONTHLY");
 				if (recurrence.getRate() != null) {
-					recurrenceString += ";INTERVAL=";
-					recurrenceString += recurrence.getRate();
+					recurrenceString.append(";INTERVAL=").append(recurrence.getRate());
 				}
 
 				LocalDate date = DateUtil.getDate(recurrence.getFrom());
 				if (date != null) {
-					recurrenceString += ";BYMONTHDAY=";
-					recurrenceString += date.getDayOfMonth();
+					recurrenceString.append(";BYMONTHDAY=").append(date.getDayOfMonth());
 				}
-
-				recurrenceList.add(recurrenceString);
 			}
 
 			/*
 			 * Yearly
 			 */
 			if (recurrence.getType().equalsIgnoreCase("YEARLY")) {
-				recurrenceString = "RRULE:FREQ=YEARLY";
+				recurrenceString.append("RRULE:FREQ=YEARLY");
 				if (recurrence.getRate() != null) {
-					recurrenceString += ";INTERVAL=";
-					recurrenceString += recurrence.getRate();
+					recurrenceString.append(";INTERVAL=").append(recurrence.getRate());
 				}
 
 				LocalDate date = DateUtil.getDate(recurrence.getFrom());
 				if (date != null) {
-					recurrenceString += ";BYMONTH=";
-					recurrenceString += date.getMonth();
-					recurrenceString += ";BYMONTHDAY=";
-					recurrenceString += date.getDayOfMonth();
+					recurrenceString.append(";BYMONTH=").append(date.getMonth());
+					recurrenceString.append(";BYMONTHDAY=").append(date.getDayOfMonth());
 				}
-
-				recurrenceList.add(recurrenceString);
 			}
+
+			/*
+			 * Adding the end of recurrence
+			 */
+			LocalDate endDate = DateUtil.getDate(recurrence.getTo());
+			if (endDate != null) {
+				recurrenceString.append(";UNTIL=").append(endDate.format(FORMATTER)).append("T000000Z");
+			}
+
+			recurrenceList.add(recurrenceString.toString());
 		}
 
 		return recurrenceList;
