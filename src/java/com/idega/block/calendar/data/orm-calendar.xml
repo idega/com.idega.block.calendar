@@ -5,5 +5,5 @@
     version="1.0">
 
     <entity class="com.idega.block.calendar.data.ExcludedPeriodEntity" />
-        
+   	<entity class="com.idega.block.calendar.data.AttendeeEntity" />
 </entity-mappings>
