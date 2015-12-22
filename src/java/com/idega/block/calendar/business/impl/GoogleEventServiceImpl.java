@@ -89,6 +89,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -102,6 +103,7 @@ import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
 import com.idega.block.calendar.bean.Weekdays;
 import com.idega.block.calendar.business.GoogleEventService;
+import com.idega.core.contact.data.bean.Email;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
@@ -276,11 +278,24 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 	@Override
 	public EventAttendee getAttendee(User user) {
 		if (user != null) {
-			EventAttendee attendee = new EventAttendee();
-			attendee.setId(user.getPersonalID());
-			attendee.setDisplayName(user.getName());
-			attendee.setEmail(user.getEmailAddress());
-			return attendee;
+			String email = user.getEmailAddress();
+			if (StringUtil.isEmpty(email)) {
+				List<Email> emails = user.getEmails();
+				if (!ListUtil.isEmpty(emails)) {
+					email = emails.iterator().next().getEmailAddress();
+				}
+			}
+
+			if (!StringUtil.isEmpty(email)) {
+				EventAttendee attendee = new EventAttendee();
+				attendee.setDisplayName(user.getName());
+				attendee.setEmail(email);
+				return attendee;
+			} else {
+				Logger.getLogger(GoogleEventService.class.getName()).warning(
+						"Failed to add user " + user.getName() + 
+						" to attendees list. No email is provided.");
+			}
 		}
 
 		return null;
@@ -327,7 +342,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 	@Override
 	public List<EventAttendee> getLegacyAttendees(Collection<com.idega.user.data.User> users) {
 		ArrayList<EventAttendee> attendees = new ArrayList<EventAttendee>();
-		
+
 		if (!ListUtil.isEmpty(users)) {
 			for (com.idega.user.data.User user : users) {
 				EventAttendee attendee = getAttendee(user);
