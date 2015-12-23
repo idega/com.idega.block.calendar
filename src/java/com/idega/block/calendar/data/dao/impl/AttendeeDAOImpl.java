@@ -82,9 +82,12 @@
  */
 package com.idega.block.calendar.data.dao.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -96,6 +99,7 @@ import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.block.calendar.data.dao.AttendeeDAO;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.SimpleQuerier;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
 import com.idega.util.ListUtil;
@@ -152,6 +156,10 @@ public class AttendeeDAOImpl extends GenericDaoImpl implements AttendeeDAO {
 	public AttendeeEntity update(Long id, Integer groupId, User inviter,
 			User invitee) {
 		AttendeeEntity entity = findByPrimaryKey(id);
+		if (entity == null) {
+			entity = findBy(inviter, invitee, groupId);
+		} 
+
 		if (entity == null) {
 			entity = new AttendeeEntity();
 		}
@@ -252,6 +260,22 @@ public class AttendeeDAOImpl extends GenericDaoImpl implements AttendeeDAO {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findByPrimaryKeys(java.util.Collection)
+	 */
+	@Override
+	public List<AttendeeEntity> findByPrimaryKeys(Collection<Long> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return getResultList(
+					AttendeeEntity.FIND_BY_PRIMARY_KEYS,
+					AttendeeEntity.class,
+					new Param(AttendeeEntity.idProp, primaryKeys));
+		}
+
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findByEventGroupId(java.lang.Integer)
 	 */
@@ -282,4 +306,83 @@ public class AttendeeDAOImpl extends GenericDaoImpl implements AttendeeDAO {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findPrimaryKeys(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List<Long> findPrimaryKeys(Integer inviterId, Integer groupId) {
+		if (inviterId != null && groupId != null) {
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT ae.id FROM cal_entry_group ceg "); //
+			query.append("JOIN ").append(AttendeeEntity.TABLE_NAME).append(" ae ");
+			query.append("ON ae.inviter = ").append(inviterId).append(" ");
+			query.append("AND ceg.cal_entry_group_id = ae.event_group_id ");
+			query.append("JOIN cal_entry ce ");
+			query.append("ON ce.ic_group_id = ").append(groupId).append(" ");
+			query.append("AND ce.cal_entry_group_id = ceg.cal_entry_group_id ");
+
+			List<Serializable[]> table = null;
+			try {
+				table = SimpleQuerier.executeQuery(query.toString(), 1);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to execute query: '" + query + 
+						"' cause of: ", e);
+			}
+
+			ArrayList<Long> primaryKeys = new ArrayList<Long>();
+			if (!ListUtil.isEmpty(table)) {
+				for (Serializable[] line : table) {
+					for (Serializable column: line) {
+						if (column instanceof Long) {
+							primaryKeys.add((Long) column);
+						}
+					}
+				}
+			}
+
+			return primaryKeys;
+		}
+
+		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findBy(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List<AttendeeEntity> findBy(Integer inviterId, Integer groupId) {
+		List<Long> primaryKeys = findPrimaryKeys(inviterId, groupId);
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return findByPrimaryKeys(primaryKeys);
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public AttendeeEntity findBy(User inviter, User invitee, Integer groupId) {
+		return getSingleResult(
+				AttendeeEntity.FIND_BY_ALL_PARAMETERS,
+				AttendeeEntity.class,
+				new Param(AttendeeEntity.inviterProp, inviter),
+				new Param(AttendeeEntity.inviteeProp, invitee),
+				new Param(AttendeeEntity.eventGroupIdProp, groupId));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#remove(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void remove(Integer inviterId, Integer groupId) {
+		if (inviterId != null && groupId != null) {
+			List<AttendeeEntity> entities = findBy(inviterId, groupId);
+			for (AttendeeEntity entity: entities) {
+				remove(entity);
+			}
+		}
+	}
 }

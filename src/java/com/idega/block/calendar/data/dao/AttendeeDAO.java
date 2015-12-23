@@ -89,6 +89,7 @@ import java.util.List;
 import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.block.calendar.data.ExcludedPeriodEntity;
 import com.idega.core.persistence.GenericDao;
+import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 
 /**
@@ -176,4 +177,47 @@ public interface AttendeeDAO extends GenericDao {
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	List<AttendeeEntity> findByInviter(User inviter);
+
+	/**
+	 * 
+	 * @param inviter
+	 * @param groupId is {@link Group#getPrimaryKey()}, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findBy(Integer userId, Integer groupId);
+
+	/**
+	 * 
+	 * <p>Removes entries by given criteria</p>
+	 * @param userId is {@link User#getId()}, not <code>null</code>;
+	 * @param groupId is {@link com.idega.user.data.bean.Group#getId()}, 
+	 * not <code>null</code>;
+	 */
+	void remove(Integer userId, Integer groupId);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link AttendeeEntity#getId()},
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByPrimaryKeys(Collection<Long> primaryKeys);
+
+	/**
+	 * 
+	 * @param inviterId is {@link User#getId()}, not <code>null</code>;
+	 * @param groupId is {@link Group#getId()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link AttendeeEntity#getId()} or 
+	 * {@link Collections#emptyList()} on failure;
+	 */
+	List<Long> findPrimaryKeys(Integer inviterId, Integer groupId);
+
+	/**
+	 * 
+	 * @param inviter
+	 * @param invitee
+	 * @param groupId is primary key of CalendarEntryGroup
+	 * @return entity or <code>null</code> on failure;
+	 */
+	AttendeeEntity findBy(User inviter, User invitee, Integer groupId);
 }

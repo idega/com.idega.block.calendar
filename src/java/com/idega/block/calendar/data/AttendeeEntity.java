@@ -92,6 +92,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.google.api.services.calendar.model.EventAttendee;
 import com.idega.user.data.bean.User;
@@ -105,12 +106,21 @@ import com.idega.user.data.bean.User;
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
 @Entity
-@Table(name = AttendeeEntity.TABLE_NAME)
+@Table(
+		name = AttendeeEntity.TABLE_NAME,
+		uniqueConstraints={@UniqueConstraint(columnNames = {
+				AttendeeEntity.COLUMN_EVENT_GROUP_ID,
+				AttendeeEntity.COLUMN_INVITEE_ID,
+				AttendeeEntity.COLUMN_INVITER_ID})})
 @NamedQueries({
 	@NamedQuery(
 			name = AttendeeEntity.FIND_BY_ID, 
 			query = "FROM AttendeeEntity s WHERE s.id = :" + 
 					AttendeeEntity.idProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_PRIMARY_KEYS, 
+			query = "FROM AttendeeEntity s WHERE s.id IN (:" + 
+					AttendeeEntity.idProp + ")"),
 	@NamedQuery(
 			name = AttendeeEntity.FIND_BY_EVENT_GROUP_ID, 
 			query = "FROM AttendeeEntity s WHERE s.eventGroupId = :" + 
@@ -118,13 +128,22 @@ import com.idega.user.data.bean.User;
 	@NamedQuery(
 			name = AttendeeEntity.FIND_BY_INVITER_ID, 
 			query = "FROM AttendeeEntity s WHERE s.inviter = :" + 
-					AttendeeEntity.inviterProp)
+					AttendeeEntity.inviterProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_ALL_PARAMETERS, 
+			query = "FROM AttendeeEntity s"
+					+ " WHERE s.inviter = :" + AttendeeEntity.inviterProp
+					+ " AND s.invitee = :" + AttendeeEntity.inviteeProp
+					+ " AND s.eventGroupId = :" + AttendeeEntity.eventGroupIdProp)
 })
 public class AttendeeEntity {
 
 	public static final String TABLE_NAME = "cal_attendees";
 
+	public static final String FIND_BY_ALL_PARAMETERS = "attendeeEntity.findByAllParameters";
+	
 	public static final String FIND_BY_ID = "attendeeEntity.findByPrimaryKey";
+	public static final String FIND_BY_PRIMARY_KEYS = "attendeeEntity.findByPrimaryKeys";
 	public static final String idProp = "id";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
