@@ -174,7 +174,7 @@ public class ExcludedPeriodDAOImpl extends GenericDaoImpl implements
 	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#removeGroup(java.lang.Integer)
 	 */
 	@Override
-	public void removeGroup(Integer id) {
+	public void removeByEventGroup(Integer id) {
 		List<ExcludedPeriodEntity> entities = findByEventGroupId(id);
 		for (ExcludedPeriodEntity entity: entities) {
 			remove(entity.getId());

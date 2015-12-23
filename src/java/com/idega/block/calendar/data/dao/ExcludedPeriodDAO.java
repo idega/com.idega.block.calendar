@@ -132,7 +132,7 @@ public interface ExcludedPeriodDAO extends GenericDao {
 	 * <p>Remove all records for CalendarEntryGroup</p>
 	 * @param id is primary key of CalendarEntryGroup;
 	 */
-	void removeGroup(Integer id);
+	void removeByEventGroup(Integer id);
 
 	/**
 	 * 
