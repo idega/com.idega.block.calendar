@@ -87,7 +87,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -271,34 +274,32 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.block.calendar.business.GoogleEventService#getAttendee(com.idega.user.data.bean.User)
+	/**
+	 * 
+	 * <p>A workaround to solve problems of bad emails in data source</p>
+	 * @param user
+	 * @return {@link Set} of correct email addresses
 	 */
-	@Override
-	public EventAttendee getAttendee(User user) {
-		if (user != null) {
-			String email = user.getEmailAddress();
-			if (StringUtil.isEmpty(email)) {
-				List<Email> emails = user.getEmails();
-				if (!ListUtil.isEmpty(emails)) {
-					email = emails.iterator().next().getEmailAddress();
-				}
-			}
+	private Set<String> getEmailAddresses(User user) {
+		Set<String> emailAddresses = new HashSet<String>();
 
-			if (!StringUtil.isEmpty(email)) {
-				EventAttendee attendee = new EventAttendee();
-				attendee.setDisplayName(user.getName());
-				attendee.setEmail(email);
-				return attendee;
-			} else {
-				Logger.getLogger(GoogleEventService.class.getName()).warning(
-						"Failed to add user " + user.getName() + 
-						" to attendees list. No email is provided.");
+		if (user != null) {
+			List<Email> emails = user.getEmails();
+			if (!ListUtil.isEmpty(emails)) {
+				for (Email email : emails) {
+					String emailAddress = email.getEmailAddress();
+
+					String[] splittedAddresses = emailAddress.split("[\\s,;]+");
+					for (String splittedAddress : splittedAddresses) {
+						if (splittedAddress.contains(CoreConstants.DOT) && splittedAddress.contains(CoreConstants.AT)) {
+							emailAddresses.add(splittedAddress);
+						}
+					}
+				}
 			}
 		}
 
-		return null;
+		return emailAddresses;
 	}
 
 	/*
@@ -306,7 +307,34 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 	 * @see com.idega.block.calendar.business.GoogleEventService#getAttendee(com.idega.user.data.bean.User)
 	 */
 	@Override
-	public EventAttendee getAttendee(com.idega.user.data.User user) {
+	public List<EventAttendee> getAttendee(User user) {
+		List<EventAttendee> attendees = new ArrayList<EventAttendee>();
+
+		if (user != null) {
+			Set<String> addresses = getEmailAddresses(user);
+			if (!ListUtil.isEmpty(addresses)) {
+				for (String address: addresses) {
+					EventAttendee attendee = new EventAttendee();
+					attendee.setDisplayName(user.getName());
+					attendee.setEmail(address);
+					attendees.add(attendee);
+				}
+			} else {
+				Logger.getLogger(GoogleEventService.class.getName()).warning(
+						"Failed to add user " + user.getName() + 
+						" to attendees list. No email is provided.");
+			}
+		}
+
+		return attendees;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.business.GoogleEventService#getAttendee(com.idega.user.data.bean.User)
+	 */
+	@Override
+	public List<EventAttendee> getAttendee(com.idega.user.data.User user) {
 		if (user != null) {
 			User jpaUser = getUserDAO().getUser(user.getPersonalID());
 			if (jpaUser != null) {
@@ -314,7 +342,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 			}
 		}
 
-		return null;
+		return Collections.emptyList();
 	}
 
 	/*
@@ -326,9 +354,9 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		ArrayList<EventAttendee> attendees = new ArrayList<EventAttendee>();
 		
 		for (User user : users) {
-			EventAttendee attendee = getAttendee(user);
-			if (attendee != null) {
-				attendees.add(attendee);
+			List<EventAttendee> attendee = getAttendee(user);
+			if (!ListUtil.isEmpty(attendee)) {
+				attendees.addAll(attendee);
 			}
 		}
 
@@ -345,9 +373,9 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 
 		if (!ListUtil.isEmpty(users)) {
 			for (com.idega.user.data.User user : users) {
-				EventAttendee attendee = getAttendee(user);
-				if (attendee != null) {
-					attendees.add(attendee);
+				List<EventAttendee> attendee = getAttendee(user);
+				if (!ListUtil.isEmpty(attendee)) {
+					attendees.addAll(attendee);
 				}
 			}
 		}

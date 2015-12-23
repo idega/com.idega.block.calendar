@@ -114,14 +114,14 @@ public interface GoogleEventService {
 	 * @param user to convert, not <code>null</code>;
 	 * @return converted entity or <code>null</code> on failure;
 	 */
-	EventAttendee getAttendee(User user);
+	List<EventAttendee> getAttendee(User user);
 
 	/**
 	 * 
 	 * @param user to convert, not <code>null</code>;
 	 * @return converted entity or <code>null</code> on failure;
 	 */
-	EventAttendee getAttendee(com.idega.user.data.User user);
+	List<EventAttendee> getAttendee(com.idega.user.data.User user);
 
 	List<EventAttendee> getLegacyAttendees(
 			Collection<com.idega.user.data.User> users);
