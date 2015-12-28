@@ -84,6 +84,7 @@ package com.idega.block.calendar.business;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.google.api.services.calendar.Calendar;
@@ -155,4 +156,33 @@ public interface GoogleEventService {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	List<String> getRecurrenceString(Recurrence recurrence);
+
+	/**
+	 * 
+	 * <p>Creates/updates event in Google calendar</p>
+	 * @param calendarService
+	 * @param calendarId is Google Calendar id, not <code>null</code>;
+	 * @param id is Google event id, new event created when <code>null</code>;
+	 * @param name of Google event, not <code>null</code> for creation;
+	 * @param description of Google event, skipped if <code>null</code>;
+	 * @param location of Google event, skipped if <code>null</code>;
+	 * @param type of Google event, skipped if <code>null</code>;
+	 * @param from is start date of Google event, not <code>null</code> for creation;
+	 * @param to is end date of Google event, not <code>null</code> for creation;
+	 * @param recurrence of Google event, skipped if <code>null</code>;
+	 * @param attendeeList of Google event, skipped if <code>null</code>;
+	 * @return updated event or <code>null</code> on failure;
+	 */
+	Event update(
+			Calendar calendarService, 
+			String calendarId, 
+			String id,
+			String name, 
+			String description, 
+			String location, 
+			String type,
+			Date from, 
+			Date to, 
+			Recurrence recurrence,
+			List<EventAttendee> attendeeList);
 }

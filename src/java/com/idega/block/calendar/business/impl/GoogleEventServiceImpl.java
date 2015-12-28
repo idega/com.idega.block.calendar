@@ -88,6 +88,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,14 +100,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
 import com.idega.block.calendar.bean.Weekdays;
 import com.idega.block.calendar.business.GoogleEventService;
 import com.idega.core.contact.data.bean.Email;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
@@ -409,4 +413,133 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 
 		return Boolean.FALSE;
 	}
+
+	/**
+	 * Get the IANA TZ time zone
+	 * @return IANA TZ time zone
+	 */
+	private String getIANATZTimeZone() {
+		//TODO: Should we implement this according different locale and time zones?
+		String ianaTzTimeZone = "Atlantic/Reykjavik";
+		String countryCode = IWMainApplication.getDefaultIWApplicationContext()
+				.getIWMainApplication().getDefaultLocale().getCountry();
+		if (countryCode.equalsIgnoreCase("IS")) {
+			ianaTzTimeZone = "Atlantic/Reykjavik";
+		}
+
+		return ianaTzTimeZone;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.business.GoogleEventService#update(com.google.api.services.calendar.Calendar, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date, com.idega.block.calendar.bean.Recurrence, java.util.List)
+	 */
+	@Override
+	public Event update(
+			Calendar calendarService,
+			String calendarId,
+			String id,
+			String name,
+			String description,
+			String location,
+			String type,
+			Date from,
+			Date to,
+			Recurrence recurrence, 
+			List<EventAttendee> attendeeList) {
+		if (calendarService != null) {
+			Event event = getEvent(calendarService, calendarId, id);
+			if (event == null) {
+				event = new Event();
+			} else {
+				event.setId(id);
+			}
+
+			/*
+			 * Event summary/Name
+			 */
+			if (!StringUtil.isEmpty(name)) {
+				event.setSummary(name);
+			}
+
+			/*
+			 * Event description
+			 */
+			if (!StringUtil.isEmpty(description)) {
+				event.setDescription(description);
+			}
+
+			/*
+			 * Event Location
+			 */
+			if (!StringUtil.isEmpty(location)) {
+				event.setLocation(location);
+			}
+
+			/*
+			 * Event type
+			 */
+			if (!StringUtil.isEmpty(type)) {
+				event.setKind(type);
+			}
+
+			/*
+			 * Event entry start date
+			 */
+			DateTime startDateTime = new DateTime(from);
+			EventDateTime start = new EventDateTime();
+			start.setDateTime(startDateTime);
+			start.setTimeZone(getIANATZTimeZone());
+			event.setStart(start);
+
+			/*
+			 * Event entry end date
+			 */
+			DateTime endDateTime = new DateTime(to);
+			EventDateTime end = new EventDateTime();
+			end.setDateTime(endDateTime);
+			end.setTimeZone(getIANATZTimeZone());
+			event.setEnd(end);
+
+			/*
+			 * Attendees
+			 */
+			if (attendeeList != null && !attendeeList.isEmpty()) {
+				event.setAttendees(attendeeList);
+			}
+
+			/*
+			 * Adding recurrence
+			 */
+			List<String> recurrenceTags = getRecurrenceString(recurrence);
+			if (!ListUtil.isEmpty(recurrenceTags)) {
+				event.setRecurrence(recurrenceTags);
+			}
+
+			/*
+			 * Temporary hack
+			 */
+			event.setVisibility("public");
+
+			/*
+			 * Insert/Update event into the google calendar
+			 */
+			try {
+				if (event.getId() != null) {
+					event = calendarService.events().update(calendarId, event.getId(), event).execute();
+				} else {
+					event = calendarService.events().insert(calendarId, event).execute();
+				}
+			} catch (IOException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, "Failed to insert/update event into "
+								+ "Google calendar, cause of:", e);
+				return null;
+			}
+
+			return event;
+		}
+
+		return null;
+    }
 }
