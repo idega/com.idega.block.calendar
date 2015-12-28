@@ -180,6 +180,14 @@ public interface AttendeeDAO extends GenericDao {
 
 	/**
 	 * 
+	 * @param invitee is {@link User}, who is invited to events, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByInvitee(User invitee);
+
+	/**
+	 * 
 	 * @param inviter
 	 * @param groupId is {@link Group#getPrimaryKey()}, not <code>null</code>
 	 * @return entities or {@link Collections#emptyList()} on failure;

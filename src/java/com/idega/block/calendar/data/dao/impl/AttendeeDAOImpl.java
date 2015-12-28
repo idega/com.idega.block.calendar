@@ -308,6 +308,22 @@ public class AttendeeDAOImpl extends GenericDaoImpl implements AttendeeDAO {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findByInvited(com.idega.user.data.bean.User)
+	 */
+	@Override
+	public List<AttendeeEntity> findByInvitee(User invitee) {
+		if (invitee != null) {
+			return getResultList(
+					AttendeeEntity.FIND_BY_INVITEE_ID,
+					AttendeeEntity.class,
+					new Param(AttendeeEntity.inviterProp, invitee));
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.idega.block.calendar.data.dao.AttendeeDAO#findPrimaryKeys(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override

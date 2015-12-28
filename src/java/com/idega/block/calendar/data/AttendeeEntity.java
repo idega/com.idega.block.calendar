@@ -130,6 +130,10 @@ import com.idega.user.data.bean.User;
 			query = "FROM AttendeeEntity s WHERE s.inviter = :" + 
 					AttendeeEntity.inviterProp),
 	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_INVITEE_ID, 
+			query = "FROM AttendeeEntity s WHERE s.invitee = :" + 
+					AttendeeEntity.inviterProp),
+	@NamedQuery(
 			name = AttendeeEntity.FIND_BY_ALL_PARAMETERS, 
 			query = "FROM AttendeeEntity s"
 					+ " WHERE s.inviter = :" + AttendeeEntity.inviterProp
@@ -155,6 +159,7 @@ public class AttendeeEntity {
 	@Column(name = COLUMN_EVENT_GROUP_ID, nullable = false)
 	private Integer eventGroupId;
 
+	public static final String FIND_BY_INVITEE_ID = "excludedPeriodEntity.findByInvitee";
 	public static final String inviteeProp = "invitee";
     public static final String COLUMN_INVITEE_ID = "invitee";
 	@ManyToOne
