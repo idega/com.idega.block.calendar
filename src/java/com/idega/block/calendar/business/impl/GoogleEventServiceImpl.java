@@ -89,7 +89,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -109,7 +108,6 @@ import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
 import com.idega.block.calendar.bean.Weekdays;
 import com.idega.block.calendar.business.GoogleEventService;
-import com.idega.core.contact.data.bean.Email;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.User;
@@ -278,34 +276,6 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		return null;
 	}
 
-	/**
-	 * 
-	 * <p>A workaround to solve problems of bad emails in data source</p>
-	 * @param user
-	 * @return {@link Set} of correct email addresses
-	 */
-	private Set<String> getEmailAddresses(User user) {
-		Set<String> emailAddresses = new HashSet<String>();
-
-		if (user != null) {
-			List<Email> emails = user.getEmails();
-			if (!ListUtil.isEmpty(emails)) {
-				for (Email email : emails) {
-					String emailAddress = email.getEmailAddress();
-
-					String[] splittedAddresses = emailAddress.split("[\\s,;]+");
-					for (String splittedAddress : splittedAddresses) {
-						if (splittedAddress.contains(CoreConstants.DOT) && splittedAddress.contains(CoreConstants.AT)) {
-							emailAddresses.add(splittedAddress);
-						}
-					}
-				}
-			}
-		}
-
-		return emailAddresses;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.calendar.business.GoogleEventService#getAttendee(com.idega.user.data.bean.User)
@@ -315,7 +285,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
 		List<EventAttendee> attendees = new ArrayList<EventAttendee>();
 
 		if (user != null) {
-			Set<String> addresses = getEmailAddresses(user);
+			Set<String> addresses = getUserDAO().getEmailAddresses(user);
 			if (!ListUtil.isEmpty(addresses)) {
 				for (String address: addresses) {
 					EventAttendee attendee = new EventAttendee();
