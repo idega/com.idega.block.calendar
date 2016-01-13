@@ -5,59 +5,55 @@
     <artifactId>com.idega.block.addon</artifactId>
     <version>5.0.0-SNAPSHOT</version>
   </parent>
-  <name>Process</name>
+  <name>Calendar</name>
   <artifactId>com.idega.block.calendar</artifactId>
   <packaging>jar</packaging>
   <inceptionYear>2005</inceptionYear>
   <description>idegaWeb Calendar Block</description>
   
-  <developers>
-    <developer>
-      <name>Tryggvi Larusson</name>
-      <id>tryggvil</id>
-      <email>tryggvi@idega.is</email>
-      <organization>idega software</organization>
-      <roles />
-    </developer>
-    <developer>
-      <name>Pall Helgason</name>
-      <id>palli</id>
-      <email>palli@idega.is</email>
-      <organization>idega software</organization>
-      <roles />
-    </developer>
-    <developer>
-      <name>Eirikur Sveinn Hrafnsson</name>
-      <id>eiki</id>
-      <email>eiki@idega.is</email>
-      <organization>idega software</organization>
-      <roles />
-    </developer>
-    <developer>
-      <name>Thorhallur Helgason</name>
-      <id>laddi</id>
-      <email>laddi@idega.is</email>
-      <organization>idega software</organization>
-      <roles />
-    </developer>
-  </developers>
-  <dependencies>
-    <dependency>
-      <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.core</artifactId>
-     </dependency>
-    <dependency>
-      <groupId>com.idega.block.addon</groupId>
-      <artifactId>com.idega.block.category</artifactId>
-     </dependency>
-     <dependency>
-      <groupId>com.idega.block.addon</groupId>
-      <artifactId>com.idega.block.oauth2.client</artifactId>
-     </dependency>
-    <dependency>
-      <groupId>com.idega.block.addon</groupId>
-      <artifactId>com.idega.block.text</artifactId>
-     </dependency>
+	<developers>
+		<developer>
+			<name>Tryggvi Larusson</name>
+			<id>tryggvil</id>
+			<email>tryggvi@idega.is</email>
+			<organization>idega software</organization>
+			<roles />
+		</developer>
+		<developer>
+			<name>Pall Helgason</name>
+			<id>palli</id>
+			<email>palli@idega.is</email>
+			<organization>idega software</organization>
+			<roles />
+		</developer>
+		<developer>
+			<name>Eirikur Sveinn Hrafnsson</name>
+			<id>eiki</id>
+			<email>eiki@idega.is</email>
+			<organization>idega software</organization>
+			<roles />
+		</developer>
+		<developer>
+			<name>Thorhallur Helgason</name>
+			<id>laddi</id>
+			<email>laddi@idega.is</email>
+			<organization>idega software</organization>
+			<roles />
+		</developer>
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>com.idega.block.platform</groupId>
+			<artifactId>com.idega.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.idega.block.addon</groupId>
+			<artifactId>com.idega.block.category</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.idega.block.addon</groupId>
+			<artifactId>com.idega.block.text</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
       		<artifactId>google-api-services-calendar</artifactId>
