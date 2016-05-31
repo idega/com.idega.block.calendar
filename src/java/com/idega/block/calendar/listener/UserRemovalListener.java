@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)UserRemovalListener.java    1.0.0 17:07:44
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,45 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.listener;
 
-import java.io.IOException;
-import java.util.logging.Level;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.idega.block.calendar.data.dao.AttendeeDAO;
+import com.idega.user.events.GroupUserRemovedEvent;
+import com.idega.util.expression.ELUtil;
 
 /**
- * <p>TODO</p>
+ * <p>Listens</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 22
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@Service
+@Scope(BeanDefinition.SCOPE_SINGLETON)
+public class UserRemovalListener implements ApplicationListener<GroupUserRemovedEvent> {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	@Autowired
+	private AttendeeDAO attendeeDAO;
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
-
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
+	private AttendeeDAO getAttendeeDAO() {
+		if (this.attendeeDAO == null) {
+			ELUtil.getInstance().autowire(this);
 		}
 
-		return null;
+		return this.attendeeDAO;
+	}
+
+	@Override
+	public void onApplicationEvent(GroupUserRemovedEvent event) {
+		if (event != null) {
+			getAttendeeDAO().remove(event.getUserId(), event.getGroupId());
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)Weekdays.java    1.0.0 16:19:55
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,210 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.bean;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 
 /**
- * <p>TODO</p>
+ * <p>Days of week selected</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 8
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@XmlRootElement(name = "weekdays")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Weekdays {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	boolean mondaySelected;
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	boolean tuesdaySelected;
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
+	boolean wednesdaySelected;
+
+	boolean thursdaySelected;
+
+	boolean fridaySelected;
+
+	boolean saturdaySelected;
+
+	boolean sundaySelected;
+
+	public boolean isMondaySelected() {
+		return mondaySelected;
+	}
+
+	public void setMondaySelected(boolean mondaySelected) {
+		this.mondaySelected = mondaySelected;
+	}
+
+	public boolean isTuesdaySelected() {
+		return tuesdaySelected;
+	}
+
+	public void setTuesdaySelected(boolean tuesdaySelected) {
+		this.tuesdaySelected = tuesdaySelected;
+	}
+
+	public boolean isWednesdaySelected() {
+		return wednesdaySelected;
+	}
+
+	public void setWednesdaySelected(boolean wednesdaySelected) {
+		this.wednesdaySelected = wednesdaySelected;
+	}
+
+	public boolean isThursdaySelected() {
+		return thursdaySelected;
+	}
+
+	public void setThursdaySelected(boolean thursdaySelected) {
+		this.thursdaySelected = thursdaySelected;
+	}
+
+	public boolean isFridaySelected() {
+		return fridaySelected;
+	}
+
+	public void setFridaySelected(boolean fridaySelected) {
+		this.fridaySelected = fridaySelected;
+	}
+
+	public boolean isSaturdaySelected() {
+		return saturdaySelected;
+	}
+
+	public void setSaturdaySelected(boolean saturdaySelected) {
+		this.saturdaySelected = saturdaySelected;
+	}
+
+	public boolean isSundaySelected() {
+		return sundaySelected;
+	}
+
+	public void setSundaySelected(boolean sundaySelected) {
+		this.sundaySelected = sundaySelected;
+	}
+
+	public void setSelectedValues(Set<Integer> selectedValues) {
+		if (!ListUtil.isEmpty(selectedValues)) {
+			for (Integer selectedValue : selectedValues) {
+				switch (selectedValue) {
+				case 1:
+					setMondaySelected(Boolean.TRUE);
+					break;
+
+				case 2:
+					setTuesdaySelected(Boolean.TRUE);
+					break;
+
+				case 3:
+					setWednesdaySelected(Boolean.TRUE);
+					break;
+
+				case 4:
+					setThursdaySelected(Boolean.TRUE);
+					break;
+
+				case 5:
+					setFridaySelected(Boolean.TRUE);
+					break;
+
+				case 6:
+					setSaturdaySelected(Boolean.TRUE);
+					break;
+
+				case 7:
+					setSundaySelected(Boolean.TRUE);
+					break;
+
+				default:
+					break;
+				}
 			}
 		}
+	}
 
-		return null;
+	public TreeSet<Integer> getSelectedValues() {
+		TreeSet<Integer> selectedDays = new TreeSet<Integer>();
+
+		if (isMondaySelected()) {
+			selectedDays.add(1);
+		}
+		
+		if (isTuesdaySelected()) {
+			selectedDays.add(2);
+		}
+		
+		if (isWednesdaySelected()) {
+			selectedDays.add(3);
+		}
+
+		if (isThursdaySelected()) {
+			selectedDays.add(4);
+		}
+
+		if (isFridaySelected()) {
+			selectedDays.add(5);
+		}
+
+		if (isSaturdaySelected()) {
+			selectedDays.add(6);
+		}
+
+		if (isSundaySelected()) {
+			selectedDays.add(7);
+		}
+
+		return selectedDays;
+	}
+
+	public List<String> getSelectedDays() {
+		List<String> selectedDays = new ArrayList<String>();
+		if (isMondaySelected()) {
+			selectedDays.add("MO");
+		}
+		
+		if (isTuesdaySelected()) {
+			selectedDays.add("TU");
+		}
+		
+		if (isWednesdaySelected()) {
+			selectedDays.add("WE");
+		}
+
+		if (isThursdaySelected()) {
+			selectedDays.add("TH");
+		}
+
+		if (isFridaySelected()) {
+			selectedDays.add("FR");
+		}
+
+		if (isSaturdaySelected()) {
+			selectedDays.add("SA");
+		}
+
+		if (isSundaySelected()) {
+			selectedDays.add("SU");
+		}
+
+		return selectedDays;
+	}
+
+	@Override
+	public String toString() {
+		return String.join(CoreConstants.COMMA, getSelectedDays());
 	}
 }

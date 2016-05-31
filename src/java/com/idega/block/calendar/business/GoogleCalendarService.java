@@ -82,8 +82,11 @@
  */
 package com.idega.block.calendar.business;
 
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.AclRule;
+
 /**
- * <p>TODO</p>
+ * <p>A local service to manage {@link com.google.api.services.calendar.model.Calendar}s</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
@@ -93,5 +96,15 @@ package com.idega.block.calendar.business;
 public interface GoogleCalendarService {
 
 	public static final String BEAN_NAME = "googleCalendarService";
+
+	/**
+	 * 
+	 * <p>Adds a rule to see calendar in public</p>
+	 * @param calendarId is {@link com.google.api.services.calendar.model.Calendar#getId()}, 
+	 * not <code>null</code>;
+	 * @param calendarService to create calendar to, not <code>null</code>;
+	 * @return created rule or <code>null</code> on failure;
+	 */
+	AclRule publish(String calendarId, Calendar calendarService);
 	
 }

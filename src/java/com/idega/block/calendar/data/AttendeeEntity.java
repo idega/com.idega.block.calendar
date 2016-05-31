@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)AttendeeEntity.java    1.0.0 10:51:20
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,128 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.data;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.idega.user.data.bean.User;
 
 /**
- * <p>TODO</p>
+ * <p>Entity of {@link EventAttendee}s for local calendar </p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 18
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@Entity
+@Table(
+		name = AttendeeEntity.TABLE_NAME,
+		uniqueConstraints={@UniqueConstraint(columnNames = {
+				AttendeeEntity.COLUMN_EVENT_GROUP_ID,
+				AttendeeEntity.COLUMN_INVITEE_ID,
+				AttendeeEntity.COLUMN_INVITER_ID})})
+@NamedQueries({
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_ID, 
+			query = "FROM AttendeeEntity s WHERE s.id = :" + 
+					AttendeeEntity.idProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_PRIMARY_KEYS, 
+			query = "FROM AttendeeEntity s WHERE s.id IN (:" + 
+					AttendeeEntity.idProp + ")"),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_EVENT_GROUP_ID, 
+			query = "FROM AttendeeEntity s WHERE s.eventGroupId = :" + 
+					AttendeeEntity.eventGroupIdProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_INVITER_ID, 
+			query = "FROM AttendeeEntity s WHERE s.inviter = :" + 
+					AttendeeEntity.inviterProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_INVITEE_ID, 
+			query = "FROM AttendeeEntity s WHERE s.invitee = :" + 
+					AttendeeEntity.inviterProp),
+	@NamedQuery(
+			name = AttendeeEntity.FIND_BY_ALL_PARAMETERS, 
+			query = "FROM AttendeeEntity s"
+					+ " WHERE s.inviter = :" + AttendeeEntity.inviterProp
+					+ " AND s.invitee = :" + AttendeeEntity.inviteeProp
+					+ " AND s.eventGroupId = :" + AttendeeEntity.eventGroupIdProp)
+})
+public class AttendeeEntity {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	public static final String TABLE_NAME = "cal_attendees";
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	public static final String FIND_BY_ALL_PARAMETERS = "attendeeEntity.findByAllParameters";
+	
+	public static final String FIND_BY_ID = "attendeeEntity.findByPrimaryKey";
+	public static final String FIND_BY_PRIMARY_KEYS = "attendeeEntity.findByPrimaryKeys";
+	public static final String idProp = "id";
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
-		}
+	public static final String FIND_BY_EVENT_GROUP_ID = "attendeeEntity.findByEventGroupPrimaryKey";
+    public static final String eventGroupIdProp = "eventGroupId";
+    public static final String COLUMN_EVENT_GROUP_ID = "event_group_id";
+	@Column(name = COLUMN_EVENT_GROUP_ID, nullable = false)
+	private Integer eventGroupId;
 
-		return null;
+	public static final String FIND_BY_INVITEE_ID = "excludedPeriodEntity.findByInvitee";
+	public static final String inviteeProp = "invitee";
+    public static final String COLUMN_INVITEE_ID = "invitee";
+	@ManyToOne
+	@JoinColumn(name = COLUMN_INVITEE_ID, nullable = false)
+	private User invitee;
+
+	public static final String FIND_BY_INVITER_ID = "excludedPeriodEntity.findByInviter";
+	public static final String inviterProp = "inviter";
+    public static final String COLUMN_INVITER_ID = "inviter";
+	@ManyToOne
+	@JoinColumn(name = COLUMN_INVITER_ID, nullable = false)
+	private User inviter;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getEventGroupId() {
+		return eventGroupId;
+	}
+
+	public void setEventGroupId(Integer eventGroupId) {
+		this.eventGroupId = eventGroupId;
+	}
+
+	public User getInvitee() {
+		return invitee;
+	}
+
+	public void setInvitee(User invitee) {
+		this.invitee = invitee;
+	}
+
+	public User getInviter() {
+		return inviter;
+	}
+
+	public void setInviter(User inviter) {
+		this.inviter = inviter;
 	}
 }

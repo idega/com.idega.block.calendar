@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)ExcludedDate.java    1.0.0 12:00:41
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,94 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.data;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Date;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
- * <p>TODO</p>
+ * <p>Entity for saving the excluded days for CalendarEntryGroup</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 17
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@Entity
+@Table(name = ExcludedPeriodEntity.TABLE_NAME)
+@NamedQueries({
+	@NamedQuery(
+			name = ExcludedPeriodEntity.FIND_BY_ID, 
+			query = "FROM ExcludedPeriodEntity s WHERE s.id = :" + 
+					ExcludedPeriodEntity.idProp),
+	@NamedQuery(
+			name = ExcludedPeriodEntity.FIND_BY_EVENT_GROUP_ID, 
+			query = "FROM ExcludedPeriodEntity s WHERE s.eventGroupId = :" + 
+					ExcludedPeriodEntity.eventGroupIdProp)
+})
+public class ExcludedPeriodEntity {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	public static final String TABLE_NAME = "cal_excluded_periods";
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	public static final String FIND_BY_ID = "excludedPeriodEntity.findByPrimaryKey";
+	public static final String idProp = "id";
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
-		}
+	public static final String FIND_BY_EVENT_GROUP_ID = "excludedPeriodEntity.findByEventGroupPrimaryKey";
+    public static final String eventGroupIdProp = "eventGroupId";
+    public static final String COLUMN_EVENT_GROUP_ID = "event_group_id";
+	@Column(name = COLUMN_EVENT_GROUP_ID, nullable = false)
+	private Integer eventGroupId;
 
-		return null;
+    public static final String fromProp = "from";
+    public static final String COLUMN_FROM = "from_";
+	@Column(name = COLUMN_FROM, nullable = false)
+	private Date from;
+
+    public static final String toProp = "to";
+    public static final String COLUMN_TO = "to_";
+	@Column(name = COLUMN_TO, nullable = false)
+	private Date to;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getEventGroupId() {
+		return eventGroupId;
+	}
+
+	public void setEventGroupId(Integer eventGroupId) {
+		this.eventGroupId = eventGroupId;
+	}
+
+	public Date getFrom() {
+		return from;
+	}
+
+	public void setFrom(Date from) {
+		this.from = from;
+	}
+
+	public Date getTo() {
+		return to;
+	}
+
+	public void setTo(Date to) {
+		this.to = to;
 	}
 }

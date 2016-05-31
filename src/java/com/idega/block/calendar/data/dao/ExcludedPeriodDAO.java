@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)ExcludedPeriodDAO.java    1.0.0 12:16:07
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,73 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.data.dao;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.idega.block.calendar.data.ExcludedPeriodEntity;
+import com.idega.core.persistence.GenericDao;
 
 /**
- * <p>TODO</p>
+ * <p>Data access object for {@link ExcludedPeriodEntity}</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 17
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+public interface ExcludedPeriodDAO extends GenericDao {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	/**
+	 * 
+	 * @param entity to save, not <code>null</code>;
+	 * @return stored entity or <code>null</code> on failure;
+	 */
+	ExcludedPeriodEntity update(ExcludedPeriodEntity entity);
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	/**
+	 * 
+	 * @param id for update, if entity exist, skipped otherwise;
+	 * @param groupId is primary key of CalendarEntryGroup, 
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param from date of exclusion,
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param to date of exclusion,
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @return stored entity or <code>null</code> on failure;
+	 */
+	ExcludedPeriodEntity update(Long id, Integer groupId, Date from, Date to);
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
-		}
+	/**
+	 * 
+	 * <p>Removes entity</p>
+	 * @param id is {@link ExcludedPeriodEntity#getId()} to remove, 
+	 * not <code>null</code>;
+	 */
+	void remove(Long id);
 
-		return null;
-	}
+	/**
+	 * 
+	 * <p>Remove all records for CalendarEntryGroup</p>
+	 * @param id is primary key of CalendarEntryGroup;
+	 */
+	void removeByEventGroup(Integer id);
+
+	/**
+	 * 
+	 * @param id is {@link ExcludedPeriodEntity#getId()} to remove, 
+	 * not <code>null</code>;
+	 * @return entity or <code>null</code> on failure;
+	 */
+	ExcludedPeriodEntity findByPrimaryKey(Long id);
+
+	/**
+	 * 
+	 * @param groupId is primary key of CalendarEntryGroup, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<ExcludedPeriodEntity> findByEventGroupId(Integer groupId);
 }

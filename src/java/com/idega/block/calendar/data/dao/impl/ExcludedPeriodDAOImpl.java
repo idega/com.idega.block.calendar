@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)ExcludedPeriodDAOImpl.java    1.0.0 12:25:34
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,53 +80,132 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.data.dao.impl;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.idega.block.calendar.data.ExcludedPeriodEntity;
+import com.idega.block.calendar.data.dao.ExcludedPeriodDAO;
+import com.idega.core.persistence.Param;
+import com.idega.core.persistence.impl.GenericDaoImpl;
 
 /**
- * <p>TODO</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 17
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@Repository("excludedPeriodDAO")
+@Transactional(readOnly = false)
+@Scope(BeanDefinition.SCOPE_SINGLETON)
+public class ExcludedPeriodDAOImpl extends GenericDaoImpl implements
+		ExcludedPeriodDAO {
 
+	/* (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#update(com.idega.block.calendar.data.ExcludedPeriodEntity)
+	 */
 	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
-
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
-
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
+	public ExcludedPeriodEntity update(ExcludedPeriodEntity entity) {
+		if (entity != null) {
+			if (entity.getId() == null) {
+				persist(entity);
+				if (entity.getId() != null) {
+					return entity;
+				} else {
+					getLogger().warning("Failed to save entity");
+				}
+			} else {
+				return merge(entity);
 			}
+		}
+
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#update(java.lang.Long, java.lang.Integer, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public ExcludedPeriodEntity update(
+			Long id, 
+			Integer groupId, 
+			Date from,
+			Date to) {
+		ExcludedPeriodEntity entity = findByPrimaryKey(id);
+		if (entity == null) {
+			entity = new ExcludedPeriodEntity();
+		}
+
+		if (groupId != null) {
+			entity.setEventGroupId(groupId);
+		}
+
+		if (from != null) {
+			entity.setFrom(from);
+		}
+
+		if (to != null) {
+			entity.setTo(to);
+		}
+
+		return update(entity);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#remove(java.lang.Long)
+	 */
+	@Override
+	public void remove(Long id) {
+		ExcludedPeriodEntity entity = findByPrimaryKey(id);
+		if (entity != null) {
+			remove(entity);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#removeGroup(java.lang.Integer)
+	 */
+	@Override
+	public void removeByEventGroup(Integer id) {
+		List<ExcludedPeriodEntity> entities = findByEventGroupId(id);
+		for (ExcludedPeriodEntity entity: entities) {
+			remove(entity.getId());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#findByPrimaryKey(java.lang.Long)
+	 */
+	@Override
+	public ExcludedPeriodEntity findByPrimaryKey(Long id) {
+		if (id != null) {
+			return getSingleResult(
+					ExcludedPeriodEntity.FIND_BY_ID,
+					ExcludedPeriodEntity.class, 
+					new Param(ExcludedPeriodEntity.idProp, id));
+		}
+
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.calendar.data.dao.ExcludedPeriodDAO#findByEventGroupId(java.lang.Integer)
+	 */
+	@Override
+	public List<ExcludedPeriodEntity> findByEventGroupId(Integer groupId) {
+		if (groupId != null) {
+			return getResultList(
+					ExcludedPeriodEntity.FIND_BY_EVENT_GROUP_ID,
+					ExcludedPeriodEntity.class,
+					new Param(ExcludedPeriodEntity.eventGroupIdProp, groupId));
 		}
 
 		return null;

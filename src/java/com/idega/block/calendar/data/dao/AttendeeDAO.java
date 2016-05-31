@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)AttendeeDAO.java    1.0.0 12:12:46
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,152 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.data.dao;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import com.idega.block.calendar.data.AttendeeEntity;
+import com.idega.block.calendar.data.ExcludedPeriodEntity;
+import com.idega.core.persistence.GenericDao;
+import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
 
 /**
- * <p>TODO</p>
+ * <p>Data access object for {@link AttendeeEntity}</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 18
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+public interface AttendeeDAO extends GenericDao {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	/**
+	 * 
+	 * @param entity to save, not <code>null</code>;
+	 * @return stored entity or <code>null</code> on failure;
+	 */
+	AttendeeEntity update(AttendeeEntity entity);
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	/**
+	 * 
+	 * @param id for update, if entity exist, skipped otherwise;
+	 * @param groupId is primary key of CalendarEntryGroup, 
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param from date of exclusion,
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param inviter the person, who invited to invitee, not <code>null</code>
+	 * @param invitee 
+	 * @return updated entity or <code>null</code> on failure;
+	 */
+	AttendeeEntity update(Long id, Integer groupId, User inviter, User invitee);
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
-		}
+	/**
+	 * 
+	 * @param id for update, if entity exist, skipped otherwise;
+	 * @param groupId is primary key of CalendarEntryGroup, 
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param from date of exclusion,
+	 * not <code>null</code> for first save, can be skipped on update;
+	 * @param inviter the person, who invited to invitee, not <code>null</code>
+	 * @param invitees
+	 * @return updated entity or <code>null</code> on failure;
+	 */
+	List<AttendeeEntity> update(Integer groupId, User inviter, Collection<User> invitees);
 
-		return null;
-	}
+	List<AttendeeEntity> update(
+			Integer groupId, 
+			Integer inviterPrimaryKey, 
+			Collection<Integer> inviteesPrimaryKeys);
+
+	/**
+	 * 
+	 * <p>Removes entity</p>
+	 * @param id is {@link ExcludedPeriodEntity#getId()} to remove, 
+	 * not <code>null</code>;
+	 */
+	void remove(Long id);
+
+	/**
+	 * 
+	 * <p>Remove all records for CalendarEntryGroup</p>
+	 * @param id is primary key of CalendarEntryGroup;
+	 */
+	void removeByEventGroup(Integer id);
+
+	/**
+	 * 
+	 * @param id is {@link ExcludedPeriodEntity#getId()} to remove, 
+	 * not <code>null</code>;
+	 * @return entity or <code>null</code> on failure;
+	 */
+	AttendeeEntity findByPrimaryKey(Long id);
+
+	/**
+	 * 
+	 * @param groupId is primary key of CalendarEntryGroup, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByEventGroupId(Integer groupId);
+
+	/**
+	 * 
+	 * @param inviter
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByInviter(User inviter);
+
+	/**
+	 * 
+	 * @param invitee is {@link User}, who is invited to events, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByInvitee(User invitee);
+
+	/**
+	 * 
+	 * @param inviter
+	 * @param groupId is {@link Group#getPrimaryKey()}, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findBy(Integer userId, Integer groupId);
+
+	/**
+	 * 
+	 * <p>Removes entries by given criteria</p>
+	 * @param userId is {@link User#getId()}, not <code>null</code>;
+	 * @param groupId is {@link com.idega.user.data.bean.Group#getId()}, 
+	 * not <code>null</code>;
+	 */
+	void remove(Integer userId, Integer groupId);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link AttendeeEntity#getId()},
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<AttendeeEntity> findByPrimaryKeys(Collection<Long> primaryKeys);
+
+	/**
+	 * 
+	 * @param inviterId is {@link User#getId()}, not <code>null</code>;
+	 * @param groupId is {@link Group#getId()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link AttendeeEntity#getId()} or 
+	 * {@link Collections#emptyList()} on failure;
+	 */
+	List<Long> findPrimaryKeys(Integer inviterId, Integer groupId);
+
+	/**
+	 * 
+	 * @param inviter
+	 * @param invitee
+	 * @param groupId is primary key of CalendarEntryGroup
+	 * @return entity or <code>null</code> on failure;
+	 */
+	AttendeeEntity findBy(User inviter, User invitee, Integer groupId);
 }

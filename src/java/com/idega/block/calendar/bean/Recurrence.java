@@ -1,5 +1,5 @@
 /**
- * @(#)GoogleCalendarServiceImpl.java    1.0.0 10:49:33 AM
+ * @(#)Reccurence.java    1.0.0 16:38:04
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,55 +80,139 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.block.calendar.business.impl;
+package com.idega.block.calendar.bean;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Service;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.AclRule;
-import com.google.api.services.calendar.model.AclRule.Scope;
-import com.idega.block.calendar.business.GoogleCalendarService;
-import com.idega.core.business.DefaultSpringBean;
-import com.idega.util.StringUtil;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * <p>TODO</p>
+ * <p>Defines recurring events</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jun 22, 2013
+ * @version 1.0.0 2015 gruod. 8
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Service(GoogleCalendarService.BEAN_NAME)
-@org.springframework.context.annotation.Scope(BeanDefinition.SCOPE_SINGLETON)
-public class GoogleCalendarServiceImpl extends DefaultSpringBean implements
-		GoogleCalendarService {
+@XmlRootElement(name = "recurrence")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Recurrence {
 
-	@Override
-	public AclRule publish(
-			String calendarId, 
-			Calendar calendarService) {
-		if (calendarService != null && !StringUtil.isEmpty(calendarId)) {
-			Scope scope = new Scope();
-			scope.setType("default");
+	private String type = "none";
 
-			AclRule rule = new AclRule();
-			rule.setScope(scope);
-			rule.setRole("reader");
+	private Integer rate = 1;
+	
+	private Weekdays weekDays = new Weekdays();
 
-			// Insert new access rule
-			try {
-				return calendarService.acl().insert(calendarId, rule).execute();
-			} catch (IOException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to insert public calendar rule, cause of:", e);
-			}
-		}
+	private Date from;
 
-		return null;
+	private Date to;
+
+	private List<ExcludedPeriod> excludedPeriods = new ArrayList<ExcludedPeriod>();
+
+	/**
+	 * 
+	 * @return one of the: 
+	 * <li>none</li>
+	 * <li>daily</li>
+	 * <li>weekly</li>
+	 * <li>monthly</li>
+	 * <li>yearly</li>
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * 
+	 * @param repeatType is one of the: 
+	 * <li>none</li>
+	 * <li>daily</li>
+	 * <li>weekly</li>
+	 * <li>monthly</li>
+	 * <li>yearly</li>
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
+	 * 
+	 * @return days of week selected
+	 */
+	public Weekdays getWeekDays() {
+		return weekDays;
+	}
+
+	public void setWeekDays(Weekdays weekDays) {
+		this.weekDays = weekDays;
+	}
+
+	/**
+	 * 
+	 * @return how often event show up on calendar, for example:
+	 * <li>every week/month - 1</li>
+	 * <li>every second week/month - 2 </li>
+	 * <li>...</li>
+	 */
+	public Integer getRate() {
+		return rate;
+	}
+
+	/**
+	 * 
+	 * @param rate defines how often event show up on calendar, for example:
+	 * <li>every week/month - 1</li>
+	 * <li>every second week/month - 2 </li>
+	 * <li>...</li>
+	 */
+	public void setRate(Integer rate) {
+		this.rate = rate;
+	}
+
+	/**
+	 * 
+	 * @return date the recurrence starts
+	 */
+	public Date getFrom() {
+		return from;
+	}
+
+	/**
+	 * 
+	 * @param from is date the recurrence starts
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public void setFrom(Date from) {
+		this.from = from;
+	}
+
+	/**
+	 * 
+	 * @return date the recurrence ends
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Date getTo() {
+		return to;
+	}
+
+	/**
+	 * 
+	 * @param to date the recurrence ends
+	 */
+	public void setTo(Date to) {
+		this.to = to;
+	}
+
+	public List<ExcludedPeriod> getExcludedPeriods() {
+		return excludedPeriods;
+	}
+
+	public void setExcludedPeriods(List<ExcludedPeriod> excludedPeriods) {
+		this.excludedPeriods = excludedPeriods;
 	}
 }
