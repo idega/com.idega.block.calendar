@@ -60,12 +60,12 @@ public class CalendarEditor extends IWAdminWindow {
 		Locale currentLocale = iwc.getCurrentLocale(), chosenLocale;
 
 		try {
-			this._userID = LoginBusinessBean.getUser(iwc).getID();
+			this._userID = LoginBusinessBean.getUser(iwc).getId();
 		} catch (Exception e) {
 			this._userID = -1;
 		}
 		try {
-			this._groupID = LoginBusinessBean.getUser(iwc).getPrimaryGroupID();
+			this._groupID = LoginBusinessBean.getUser(iwc).getPrimaryGroup().getID();
 		} catch (Exception e) {
 			this._groupID = -1;
 		}
