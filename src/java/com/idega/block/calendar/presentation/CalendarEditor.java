@@ -113,7 +113,7 @@ public class CalendarEditor extends IWAdminWindow {
 				this._typeID = -1;
 			}
 		}*/
-
+		
 		if (iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_DATE) != null) {
 			try {
 				this._stamp = new IWTimestamp(iwc.getParameter(CalendarParameters.PARAMETER_ENTRY_DATE));
@@ -130,7 +130,7 @@ public class CalendarEditor extends IWAdminWindow {
 			} catch (Exception e) {
 			}
 		}
-
+		
 		if (iwc.isParameterSet(CalendarParameters.PARAMETER_ALL_DAY_EVENT)) {
 			this._allDayEvent = true;
 		}
@@ -138,7 +138,7 @@ public class CalendarEditor extends IWAdminWindow {
 		if (iwc.isParameterSet(CalendarParameters.PARAMETER_REPEAT_EVERY_YEAR)) {
 			this._repeatEveryYear = true;
 		}
-
+		
 		if (iwc.getParameter(CalendarParameters.PARAMETER_MODE) != null) {
 			if (iwc.getParameter(CalendarParameters.PARAMETER_MODE).equalsIgnoreCase(CalendarParameters.PARAMETER_MODE_CLOSE)) {
 				closeEditor(iwc);
@@ -198,7 +198,7 @@ public class CalendarEditor extends IWAdminWindow {
 			categories.setSelectedElement(Integer.toString(entry.getCategoryId()));
 		}
 		addLeft(this._iwrb.getLocalizedString("category", "Category") + ":", categories, false);
-
+		
 		DropdownMenu entryTypes = CalendarBusiness.getEntryTypes(CalendarParameters.PARAMETER_TYPE_ID, iLocaleId);
 		if (entry != null) {
 			entryTypes.setSelectedElement(Integer.toString(entry.getEntryTypeID()));
@@ -235,10 +235,10 @@ public class CalendarEditor extends IWAdminWindow {
 			entryEndDate.setTimestamp(this._endStamp.getTimestamp());
 		}
 		entryEndDate.setStyleAttribute(STYLE);
-
+		
 		CheckBox allDayEvent = new CheckBox(CalendarParameters.PARAMETER_ALL_DAY_EVENT, Boolean.TRUE.toString());
 		allDayEvent.setChecked(this._allDayEvent);
-
+		
 		CheckBox repeatEveryYear = new CheckBox(CalendarParameters.PARAMETER_REPEAT_EVERY_YEAR, Boolean.TRUE.toString());
 		repeatEveryYear.setChecked(this._repeatEveryYear);
 
